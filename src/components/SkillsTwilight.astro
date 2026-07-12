@@ -1,0 +1,198 @@
+---
+// SkillsTwilight — Twilight Zone (500-1000m)
+const skills = [
+  { name: 'UI/UX Design', category: 'design', glow: 'cyan' },
+  { name: 'Brand Identity', category: 'design', glow: 'cyan' },
+  { name: 'Motion Design', category: 'design', glow: 'cyan' },
+  { name: 'Three.js / WebGL', category: 'engineering', glow: 'blue' },
+  { name: 'React / Next.js', category: 'engineering', glow: 'blue' },
+  { name: 'Astro', category: 'engineering', glow: 'blue' },
+  { name: 'GSAP Animation', category: 'engineering', glow: 'blue' },
+  { name: 'TypeScript', category: 'engineering', glow: 'blue' },
+  { name: 'Figma', category: 'tools', glow: 'green' },
+  { name: 'After Effects', category: 'tools', glow: 'green' },
+  { name: 'Blender', category: 'tools', glow: 'green' },
+  { name: 'Node.js', category: 'engineering', glow: 'blue' },
+];
+---
+
+<section class="skills section" id="skills">
+  <div class="container">
+    <div class="skills__header reveal-up">
+      <h6 class="text-label">▼ 500M — TWILIGHT ZONE</h6>
+      <h2>Where light fades,<br/>skills illuminate</h2>
+      <p class="text-large">
+        Each capability glows in the dark — hover to see them pulse.
+      </p>
+    </div>
+
+    <div class="skills__grid reveal-stagger">
+      {skills.map((skill, i) => (
+        <div
+          class={`skills__orb glass-card reveal-stagger-item`}
+          data-category={skill.category}
+          data-glow={skill.glow}
+          style={`animation-delay: ${i * 0.3}s;`}
+        >
+          <div class="skills__orb-glow"></div>
+          <span class="skills__orb-name">{skill.name}</span>
+          <span class="skills__orb-category text-label">{skill.category}</span>
+        </div>
+      ))}
+    </div>
+
+    <!-- Sonar radar visualization -->
+    <div class="skills__radar reveal-scale" data-parallax="0.05">
+      <svg class="skills__radar-svg" viewBox="0 0 300 300">
+        <circle cx="150" cy="150" r="140" fill="none" stroke="rgba(72,202,228,0.08)" stroke-width="0.5"/>
+        <circle cx="150" cy="150" r="100" fill="none" stroke="rgba(72,202,228,0.06)" stroke-width="0.5"/>
+        <circle cx="150" cy="150" r="60" fill="none" stroke="rgba(72,202,228,0.04)" stroke-width="0.5"/>
+        <line x1="150" y1="10" x2="150" y2="290" stroke="rgba(72,202,228,0.05)" stroke-width="0.5"/>
+        <line x1="10" y1="150" x2="290" y2="150" stroke="rgba(72,202,228,0.05)" stroke-width="0.5"/>
+        <!-- Sweep line -->
+        <line class="skills__radar-sweep" x1="150" y1="150" x2="150" y2="10" stroke="rgba(72,202,228,0.4)" stroke-width="1"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<style>
+  .skills {
+    padding: var(--section-padding) 0;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  .skills__header {
+    margin-bottom: 4rem;
+  }
+
+  .skills__header h6 {
+    margin-bottom: 1rem;
+    color: var(--accent);
+  }
+
+  .skills__header h2 {
+    margin-bottom: 1rem;
+  }
+
+  .skills__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .skills__orb {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+    transition: transform var(--transition-fast), box-shadow var(--transition-base);
+  }
+
+  .skills__orb:hover {
+    transform: translateY(-4px) scale(1.02);
+  }
+
+  .skills__orb[data-glow="cyan"]:hover {
+    box-shadow:
+      0 0 20px rgba(72, 202, 228, 0.3),
+      0 0 40px rgba(72, 202, 228, 0.15),
+      inset 0 0 20px rgba(72, 202, 228, 0.05);
+  }
+
+  .skills__orb[data-glow="blue"]:hover {
+    box-shadow:
+      0 0 20px rgba(0, 180, 216, 0.3),
+      0 0 40px rgba(0, 180, 216, 0.15),
+      inset 0 0 20px rgba(0, 180, 216, 0.05);
+  }
+
+  .skills__orb[data-glow="green"]:hover {
+    box-shadow:
+      0 0 20px rgba(57, 255, 20, 0.3),
+      0 0 40px rgba(57, 255, 20, 0.15),
+      inset 0 0 20px rgba(57, 255, 20, 0.05);
+  }
+
+  .skills__orb-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+  }
+
+  .skills__orb:hover .skills__orb-glow {
+    opacity: 1;
+  }
+
+  .skills__orb[data-glow="cyan"] .skills__orb-glow {
+    background: radial-gradient(circle, rgba(72, 202, 228, 0.2) 0%, transparent 70%);
+  }
+
+  .skills__orb[data-glow="blue"] .skills__orb-glow {
+    background: radial-gradient(circle, rgba(0, 180, 216, 0.2) 0%, transparent 70%);
+  }
+
+  .skills__orb[data-glow="green"] .skills__orb-glow {
+    background: radial-gradient(circle, rgba(57, 255, 20, 0.2) 0%, transparent 70%);
+  }
+
+  .skills__orb-name {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    position: relative;
+    z-index: 1;
+  }
+
+  .skills__orb-category {
+    font-size: 0.5625rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Sonar radar */
+  .skills__radar {
+    position: absolute;
+    top: 50%;
+    right: -5%;
+    transform: translateY(-50%);
+    width: 300px;
+    height: 300px;
+    opacity: 0.3;
+    z-index: 0;
+  }
+
+  .skills__radar-sweep {
+    transform-origin: 150px 150px;
+    animation: radar-sweep 4s linear infinite;
+  }
+
+  @keyframes radar-sweep {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 768px) {
+    .skills__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .skills__radar {
+      display: none;
+    }
+  }
+</style>

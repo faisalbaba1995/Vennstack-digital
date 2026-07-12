@@ -1,0 +1,197 @@
+---
+// Footer — Ocean Floor
+---
+
+<footer class="footer" id="footer">
+  <div class="container footer__content">
+    <div class="footer__top reveal-up">
+      <div class="footer__brand">
+        <span class="footer__logo">V</span>
+        <div class="footer__brand-text">
+          <span class="footer__studio-name">VennStack Studio</span>
+          <span class="footer__tagline text-small">Crafting depth in digital.</span>
+        </div>
+      </div>
+
+      <div class="footer__depth-stamp text-mono">
+        <span class="footer__depth-label text-label">MAXIMUM DEPTH REACHED</span>
+        <span class="footer__depth-value" id="footer-depth">11,000m</span>
+      </div>
+    </div>
+
+    <div class="footer__divider"></div>
+
+    <div class="footer__bottom">
+      <span class="footer__copyright text-mono">
+        © 2026 VENNSTACK STUDIO. ALL RIGHTS RESERVED.
+      </span>
+      <span class="footer__coordinates text-mono">
+        34.08°N / 74.79°E · SURFACE TIME: <span id="footer-time"></span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Ocean floor particles -->
+  <div class="footer__sediment">
+    <div class="footer__sediment-line"></div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    padding: 3rem 0 2rem;
+    border-top: 1px solid rgba(var(--accent-rgb), 0.08);
+  }
+
+  .footer__content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .footer__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .footer__brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .footer__logo {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 100;
+    color: var(--accent);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(var(--accent-rgb), 0.2);
+    border-radius: var(--radius-sm);
+    text-shadow: 0 0 15px rgba(var(--accent-rgb), 0.4);
+  }
+
+  .footer__brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .footer__studio-name {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--text-primary);
+  }
+
+  .footer__tagline {
+    color: var(--text-muted);
+  }
+
+  .footer__depth-stamp {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+  }
+
+  .footer__depth-value {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--accent);
+    text-shadow: 0 0 8px rgba(var(--accent-rgb), 0.4);
+  }
+
+  .footer__divider {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(var(--accent-rgb), 0.15) 50%,
+      transparent 100%
+    );
+    margin-bottom: 1.5rem;
+  }
+
+  .footer__bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer__copyright {
+    font-size: 0.625rem;
+    color: var(--text-ghost);
+    letter-spacing: 0.05em;
+  }
+
+  .footer__coordinates {
+    font-size: 0.625rem;
+    color: var(--text-ghost);
+  }
+
+  /* Ocean floor sediment */
+  .footer__sediment {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    overflow: hidden;
+  }
+
+  .footer__sediment-line {
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(var(--accent-rgb), 0.1) 20%,
+      rgba(var(--accent-rgb), 0.2) 50%,
+      rgba(var(--accent-rgb), 0.1) 80%,
+      transparent 100%
+    );
+  }
+
+  @media (max-width: 768px) {
+    .footer__top {
+      flex-direction: column;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+
+    .footer__depth-stamp {
+      align-items: flex-start;
+    }
+
+    .footer__bottom {
+      flex-direction: column;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const timeEl = document.getElementById('footer-time');
+    if (timeEl) {
+      function updateTime() {
+        const now = new Date();
+        timeEl!.textContent = now.toLocaleTimeString('en-US', {
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        });
+      }
+      updateTime();
+      setInterval(updateTime, 1000);
+    }
+  });
+</script>

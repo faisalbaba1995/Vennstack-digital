@@ -1,0 +1,269 @@
+---
+// ProjectsMidnight — Midnight Zone (1000-4000m)
+const projects = [
+  {
+    id: 'project-1',
+    title: 'Luminara',
+    category: 'BRAND · WEB',
+    description: 'Complete brand identity and immersive website for a luxury wellness brand.',
+    year: '2025',
+  },
+  {
+    id: 'project-2',
+    title: 'Horizon',
+    category: 'WEB · MOTION',
+    description: 'Scroll-driven architectural portfolio with 3D walkthrough experience.',
+    year: '2025',
+  },
+  {
+    id: 'project-3',
+    title: 'Cosmo Health',
+    category: 'BRAND · COLLATERAL',
+    description: 'Healthcare brand system with responsive design and patient portal.',
+    year: '2024',
+  },
+  {
+    id: 'project-4',
+    title: 'Svayam Semi',
+    category: 'BRAND · WEB',
+    description: 'Semiconductor brand identity with technical precision and visual clarity.',
+    year: '2024',
+  },
+  {
+    id: 'project-5',
+    title: 'CREO Spaces',
+    category: 'BRAND · WEB · MOTION',
+    description: 'Real estate branding — "Spaces that endure." Architectural renders to signage.',
+    year: '2024',
+  },
+  {
+    id: 'project-6',
+    title: 'Eye Candy',
+    category: 'BRAND · COLLATERAL',
+    description: 'Vibrant confectionery brand with playful identity and packaging design.',
+    year: '2023',
+  },
+];
+---
+
+<section class="projects section" id="projects">
+  <div class="container">
+    <div class="projects__header reveal-up">
+      <h6 class="text-label">▼ 1,000M — MIDNIGHT ZONE</h6>
+      <h2>In the dark,<br/>the work glows</h2>
+      <p class="text-large">
+        Hover to illuminate. Click to explore.
+      </p>
+    </div>
+
+    <div class="projects__grid reveal-stagger">
+      {projects.map((project, i) => (
+        <article
+          class="projects__card glass-card reveal-stagger-item"
+          id={project.id}
+          style={`--card-delay: ${i * 0.15}s`}
+        >
+          {/* Angler fish lantern glow */}
+          <div class="projects__card-lantern">
+            <div class="projects__card-lantern-dot"></div>
+            <div class="projects__card-lantern-stem"></div>
+          </div>
+
+          {/* Placeholder image area */}
+          <div class="projects__card-image">
+            <div class="projects__card-image-placeholder">
+              <span class="projects__card-image-number text-mono">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+            </div>
+          </div>
+
+          <div class="projects__card-content">
+            <div class="projects__card-meta">
+              <span class="text-label">{project.category}</span>
+              <span class="text-label">{project.year}</span>
+            </div>
+            <h3 class="projects__card-title">{project.title}</h3>
+            <p class="projects__card-desc text-small">{project.description}</p>
+          </div>
+
+          {/* Bioluminescent border glow */}
+          <div class="projects__card-glow-border"></div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .projects {
+    padding: var(--section-padding) 0;
+    min-height: 100vh;
+  }
+
+  .projects__header {
+    margin-bottom: 4rem;
+  }
+
+  .projects__header h6 {
+    margin-bottom: 1rem;
+    color: var(--accent);
+  }
+
+  .projects__header h2 {
+    margin-bottom: 1rem;
+  }
+
+  .projects__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .projects__card {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  .projects__card:hover {
+    transform: translateY(-6px);
+    box-shadow:
+      0 0 30px rgba(var(--accent-rgb), 0.2),
+      0 0 60px rgba(var(--accent-rgb), 0.1);
+  }
+
+  /* Angler fish lantern */
+  .projects__card-lantern {
+    position: absolute;
+    top: -20px;
+    right: 30px;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  .projects__card:hover .projects__card-lantern {
+    opacity: 1;
+  }
+
+  .projects__card-lantern-stem {
+    width: 1px;
+    height: 24px;
+    background: rgba(var(--accent-rgb), 0.3);
+    margin: 0 auto;
+  }
+
+  .projects__card-lantern-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-bright);
+    margin: 0 auto;
+    box-shadow:
+      0 0 10px var(--accent-bright),
+      0 0 20px rgba(125, 249, 255, 0.5),
+      0 0 40px rgba(125, 249, 255, 0.2);
+    animation: lantern-pulse 1.5s ease-in-out infinite alternate;
+  }
+
+  @keyframes lantern-pulse {
+    0% { transform: scale(0.8); opacity: 0.6; }
+    100% { transform: scale(1.2); opacity: 1; }
+  }
+
+  /* Card image area */
+  .projects__card-image {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .projects__card-image-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      135deg,
+      rgba(var(--accent-rgb), 0.05) 0%,
+      rgba(var(--accent-rgb), 0.02) 100%
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: background var(--transition-base);
+  }
+
+  .projects__card:hover .projects__card-image-placeholder {
+    background: linear-gradient(
+      135deg,
+      rgba(var(--accent-rgb), 0.1) 0%,
+      rgba(var(--accent-rgb), 0.04) 100%
+    );
+  }
+
+  .projects__card-image-number {
+    font-size: 3rem;
+    font-weight: 200;
+    color: rgba(var(--accent-rgb), 0.15);
+    transition: color var(--transition-base);
+  }
+
+  .projects__card:hover .projects__card-image-number {
+    color: rgba(var(--accent-rgb), 0.3);
+  }
+
+  /* Card content */
+  .projects__card-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .projects__card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .projects__card-title {
+    font-size: 1.5rem;
+    font-weight: 300;
+    transition: color var(--transition-fast);
+  }
+
+  .projects__card:hover .projects__card-title {
+    color: var(--accent);
+    text-shadow: 0 0 15px rgba(var(--accent-rgb), 0.3);
+  }
+
+  .projects__card-desc {
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* Bioluminescent border glow */
+  .projects__card-glow-border {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    border: 1px solid rgba(var(--accent-rgb), 0.3);
+    box-shadow:
+      inset 0 0 20px rgba(var(--accent-rgb), 0.05);
+  }
+
+  .projects__card:hover .projects__card-glow-border {
+    opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    .projects__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

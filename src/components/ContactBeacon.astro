@@ -1,0 +1,396 @@
+---
+// ContactBeacon — The Beacon (ocean floor)
+---
+
+<section class="contact section" id="contact">
+  <div class="container">
+    <div class="contact__header reveal-up">
+      <h6 class="text-label">▼ 6,000M — THE BEACON</h6>
+      <h2>Send a signal<br/>from the deep</h2>
+      <p class="text-large">
+        You've made it to the ocean floor. Few dive this deep.<br/>
+        Let's build something extraordinary together.
+      </p>
+    </div>
+
+    <div class="contact__grid">
+      <!-- Beacon visualization -->
+      <div class="contact__beacon reveal-left" data-parallax="0.03">
+        <div class="contact__beacon-tower">
+          <div class="contact__beacon-light">
+            <div class="contact__beacon-pulse"></div>
+            <div class="contact__beacon-pulse" style="animation-delay: 1s;"></div>
+            <div class="contact__beacon-pulse" style="animation-delay: 2s;"></div>
+          </div>
+          <div class="contact__beacon-base"></div>
+          <div class="contact__beacon-stem"></div>
+        </div>
+
+        <div class="contact__info">
+          <div class="contact__info-item">
+            <span class="text-label">EMAIL</span>
+            <a href="mailto:hello@vennstack.studio" class="contact__link">hello@vennstack.studio</a>
+          </div>
+          <div class="contact__info-item">
+            <span class="text-label">LOCATION</span>
+            <span class="contact__coords text-mono">34.08°N / 74.79°E</span>
+          </div>
+          <div class="contact__info-item">
+            <span class="text-label">SOCIALS</span>
+            <div class="contact__socials">
+              <a href="#" class="contact__social-link" aria-label="Twitter">𝕏</a>
+              <a href="#" class="contact__social-link" aria-label="Instagram">IG</a>
+              <a href="#" class="contact__social-link" aria-label="LinkedIn">LI</a>
+              <a href="#" class="contact__social-link" aria-label="Dribbble">DR</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact form styled as transmission console -->
+      <div class="contact__form-wrapper reveal-right">
+        <div class="contact__console glass-card">
+          <div class="contact__console-header">
+            <div class="contact__console-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <span class="text-label">TRANSMISSION CONSOLE</span>
+            <div class="contact__console-status">
+              <span class="contact__console-status-dot"></span>
+              <span class="text-label">ONLINE</span>
+            </div>
+          </div>
+
+          <form class="contact__form" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
+            <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY" />
+
+            <div class="contact__field">
+              <label class="text-label" for="contact-name">YOUR CALLSIGN</label>
+              <input
+                type="text"
+                id="contact-name"
+                name="name"
+                placeholder="Name"
+                required
+                autocomplete="name"
+              />
+            </div>
+
+            <div class="contact__field">
+              <label class="text-label" for="contact-email">FREQUENCY</label>
+              <input
+                type="email"
+                id="contact-email"
+                name="email"
+                placeholder="email@example.com"
+                required
+                autocomplete="email"
+              />
+            </div>
+
+            <div class="contact__field">
+              <label class="text-label" for="contact-message">TRANSMISSION</label>
+              <textarea
+                id="contact-message"
+                name="message"
+                placeholder="What are you building?"
+                rows="4"
+                required
+              ></textarea>
+            </div>
+
+            <button type="submit" class="contact__submit" id="contact-submit">
+              <span class="contact__submit-text">SEND SIGNAL</span>
+              <span class="contact__submit-icon">◈</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact {
+    padding: calc(var(--section-padding) * 1.5) 0;
+    min-height: 100vh;
+  }
+
+  .contact__header {
+    text-align: center;
+    margin-bottom: 5rem;
+  }
+
+  .contact__header h6 {
+    margin-bottom: 1rem;
+    color: var(--accent);
+  }
+
+  .contact__header h2 {
+    margin-bottom: 1rem;
+  }
+
+  .contact__header p {
+    margin: 0 auto;
+  }
+
+  .contact__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  /* Beacon */
+  .contact__beacon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+    padding-top: 2rem;
+  }
+
+  .contact__beacon-tower {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .contact__beacon-light {
+    position: relative;
+    width: 16px;
+    height: 16px;
+  }
+
+  .contact__beacon-pulse {
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+    animation: beacon-ping 3s ease-out infinite;
+  }
+
+  @keyframes beacon-ping {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(6); opacity: 0; }
+  }
+
+  .contact__beacon-light::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--accent-bright);
+    box-shadow:
+      0 0 10px var(--accent-bright),
+      0 0 20px rgba(125, 249, 255, 0.5),
+      0 0 60px rgba(125, 249, 255, 0.2);
+    animation: beacon-glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes beacon-glow {
+    0% { opacity: 0.6; }
+    100% { opacity: 1; }
+  }
+
+  .contact__beacon-stem {
+    width: 2px;
+    height: 60px;
+    background: linear-gradient(180deg, rgba(var(--accent-rgb), 0.4) 0%, rgba(var(--accent-rgb), 0.1) 100%);
+  }
+
+  .contact__beacon-base {
+    width: 40px;
+    height: 2px;
+    background: rgba(var(--accent-rgb), 0.2);
+    margin-top: 4px;
+  }
+
+  .contact__info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .contact__info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .contact__link {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--accent);
+    transition: text-shadow var(--transition-fast);
+  }
+
+  .contact__link:hover {
+    text-shadow: 0 0 10px rgba(var(--accent-rgb), 0.5);
+  }
+
+  .contact__coords {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+  }
+
+  .contact__socials {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .contact__social-link {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 0.375rem 0.625rem;
+    border: 1px solid rgba(var(--accent-rgb), 0.15);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+  }
+
+  .contact__social-link:hover {
+    color: var(--accent);
+    border-color: rgba(var(--accent-rgb), 0.4);
+    box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.2);
+  }
+
+  /* Console / Form */
+  .contact__console {
+    overflow: hidden;
+  }
+
+  .contact__console-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1.5rem;
+    border-bottom: var(--border-subtle);
+    background: rgba(0, 10, 38, 0.4);
+  }
+
+  .contact__console-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .contact__console-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(var(--accent-rgb), 0.2);
+  }
+
+  .contact__console-dots span:first-child { background: rgba(255, 95, 87, 0.5); }
+  .contact__console-dots span:nth-child(2) { background: rgba(255, 189, 46, 0.5); }
+  .contact__console-dots span:last-child { background: rgba(39, 201, 63, 0.5); }
+
+  .contact__console-status {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .contact__console-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #39FF14;
+    box-shadow: 0 0 6px rgba(57, 255, 20, 0.5);
+    animation: status-blink 3s ease-in-out infinite;
+  }
+
+  @keyframes status-blink {
+    0%, 90%, 100% { opacity: 1; }
+    95% { opacity: 0.3; }
+  }
+
+  .contact__form {
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .contact__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .contact__field input,
+  .contact__field textarea {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    background: rgba(var(--accent-rgb), 0.04);
+    border: 1px solid rgba(var(--accent-rgb), 0.12);
+    border-radius: var(--radius-sm);
+    padding: 0.875rem 1rem;
+    outline: none;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    resize: vertical;
+  }
+
+  .contact__field input::placeholder,
+  .contact__field textarea::placeholder {
+    color: var(--text-ghost);
+  }
+
+  .contact__field input:focus,
+  .contact__field textarea:focus {
+    border-color: rgba(var(--accent-rgb), 0.4);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.08), 0 0 15px rgba(var(--accent-rgb), 0.1);
+  }
+
+  .contact__submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.08);
+    border: 1px solid rgba(var(--accent-rgb), 0.3);
+    border-radius: var(--radius-sm);
+    padding: 1rem 2rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    width: 100%;
+  }
+
+  .contact__submit:hover {
+    background: rgba(var(--accent-rgb), 0.15);
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.25);
+  }
+
+  .contact__submit-icon {
+    font-size: 1rem;
+    animation: sonar-icon 2s ease-in-out infinite;
+  }
+
+  @keyframes sonar-icon {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  @media (max-width: 768px) {
+    .contact__grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
+    .contact__beacon {
+      order: 2;
+    }
+  }
+</style>

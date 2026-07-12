@@ -1,0 +1,191 @@
+---
+// HeroSurface — The Surface (0-200m)
+---
+
+<section class="hero section" id="hero">
+  <!-- Light rays from above -->
+  <div class="light-rays">
+    <div class="god-ray"></div>
+    <div class="god-ray"></div>
+    <div class="god-ray"></div>
+    <div class="god-ray"></div>
+    <div class="god-ray"></div>
+  </div>
+
+  <!-- Caustic light patterns -->
+  <div class="caustics"></div>
+
+  <!-- Wave SVG at top -->
+  <div class="hero__wave">
+    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+      <path class="hero__wave-path hero__wave-path--1" d="M0,60 C360,120 720,0 1080,60 C1260,90 1380,60 1440,60 L1440,0 L0,0 Z" fill="rgba(72,202,228,0.08)"/>
+      <path class="hero__wave-path hero__wave-path--2" d="M0,40 C240,80 480,20 720,50 C960,80 1200,30 1440,50 L1440,0 L0,0 Z" fill="rgba(72,202,228,0.05)"/>
+    </svg>
+  </div>
+
+  <div class="container hero__content">
+    <div class="hero__label reveal-up text-label">
+      <span class="hero__dot sonar-ping"></span>
+      DESIGN STUDIO · EST. 2024
+    </div>
+
+    <h1 class="hero__title reveal-up">
+      <span class="hero__title-line">VennStack</span>
+      <span class="hero__title-line hero__title-line--accent">Studio</span>
+    </h1>
+
+    <p class="hero__subtitle text-large reveal-up">
+      Crafting immersive digital experiences that pull you in.<br/>
+      The deeper you go, the more you discover.
+    </p>
+
+    <div class="hero__scroll-cta reveal-up" data-parallax="-0.1">
+      <div class="hero__scroll-line"></div>
+      <span class="hero__scroll-text text-mono">SCROLL TO DIVE</span>
+      <span class="hero__scroll-arrow">▼</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding-top: 0;
+  }
+
+  .hero__wave {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+  }
+
+  .hero__wave svg {
+    width: 100%;
+    height: 120px;
+    display: block;
+  }
+
+  .hero__wave-path--1 {
+    animation: wave-sway 8s ease-in-out infinite;
+  }
+
+  .hero__wave-path--2 {
+    animation: wave-sway 12s ease-in-out infinite reverse;
+  }
+
+  @keyframes wave-sway {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-20px); }
+  }
+
+  .hero__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero__label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  .hero__title {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    line-height: 1;
+  }
+
+  .hero__title-line {
+    display: block;
+    font-size: clamp(3.5rem, 10vw, 8rem);
+    font-weight: 100;
+    letter-spacing: -0.04em;
+    color: var(--text-primary);
+  }
+
+  .hero__title-line--accent {
+    color: var(--accent);
+    text-shadow:
+      0 0 30px rgba(var(--accent-rgb), 0.3),
+      0 0 60px rgba(var(--accent-rgb), 0.15);
+  }
+
+  .hero__subtitle {
+    max-width: 500px;
+    text-align: center;
+    color: var(--text-secondary);
+  }
+
+  .hero__scroll-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 3rem;
+    opacity: 0.6;
+  }
+
+  .hero__scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(180deg, transparent 0%, var(--accent) 100%);
+    animation: scroll-line 2s ease-in-out infinite;
+  }
+
+  @keyframes scroll-line {
+    0%, 100% { transform: scaleY(1); opacity: 0.5; }
+    50% { transform: scaleY(0.6); opacity: 1; }
+  }
+
+  .hero__scroll-text {
+    font-size: 0.625rem;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+  }
+
+  .hero__scroll-arrow {
+    font-size: 0.625rem;
+    color: var(--accent);
+    animation: arrow-bounce 2s ease-in-out infinite;
+  }
+
+  @keyframes arrow-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  @media (max-width: 768px) {
+    .hero__title-line {
+      font-size: clamp(2.5rem, 12vw, 5rem);
+    }
+
+    .hero__subtitle {
+      font-size: 1rem;
+    }
+
+    .hero__scroll-cta {
+      margin-top: 2rem;
+    }
+  }
+</style>

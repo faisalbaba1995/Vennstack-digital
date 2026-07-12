@@ -1,0 +1,276 @@
+/* ============================================
+   DEEP DIVE PORTFOLIO — Global Design System
+   VennStack Studio · 2026
+   ============================================ */
+
+/* ---------- Reset ---------- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: auto; /* Lenis handles smooth scroll */
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--bg-surface);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img, video, canvas {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* ---------- Fonts ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+
+/* ---------- Custom Properties ---------- */
+:root {
+  /* Fonts */
+  --font-heading: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Ocean Depth Colors — dynamically shifted via JS */
+  --bg-surface: #0077B6;
+  --bg-current: #0077B6;
+  --bg-deep: #000000;
+
+  /* Accent Colors */
+  --accent: #48CAE4;
+  --accent-rgb: 72, 202, 228;
+  --accent-glow: rgba(72, 202, 228, 0.4);
+  --accent-bright: #7DF9FF;
+  --accent-green: #39FF14;
+  --accent-green-rgb: 57, 255, 20;
+
+  /* Text Colors */
+  --text-primary: #CAF0F8;
+  --text-secondary: rgba(202, 240, 248, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.45);
+  --text-ghost: rgba(255, 255, 255, 0.2);
+
+  /* Opacity Scale */
+  --ocean-5: rgba(var(--accent-rgb), 0.05);
+  --ocean-10: rgba(var(--accent-rgb), 0.10);
+  --ocean-15: rgba(var(--accent-rgb), 0.15);
+  --ocean-20: rgba(var(--accent-rgb), 0.20);
+  --ocean-30: rgba(var(--accent-rgb), 0.30);
+  --ocean-40: rgba(var(--accent-rgb), 0.40);
+  --ocean-60: rgba(var(--accent-rgb), 0.60);
+
+  /* Spacing */
+  --section-padding: clamp(5rem, 12vh, 10rem);
+  --container-max: 1200px;
+  --container-padding: clamp(1.5rem, 4vw, 3rem);
+
+  /* Borders & Radius */
+  --border-subtle: 1px solid rgba(var(--accent-rgb), 0.12);
+  --border-glow: 1px solid rgba(var(--accent-rgb), 0.3);
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+
+  /* Shadows & Glow */
+  --glow-sm: 0 0 10px rgba(var(--accent-rgb), 0.2);
+  --glow-md: 0 0 20px rgba(var(--accent-rgb), 0.3), 0 0 40px rgba(var(--accent-rgb), 0.1);
+  --glow-lg: 0 0 30px rgba(var(--accent-rgb), 0.4), 0 0 60px rgba(var(--accent-rgb), 0.2), 0 0 100px rgba(var(--accent-rgb), 0.1);
+  --glow-bio: 0 0 15px var(--accent-bright), 0 0 30px rgba(125, 249, 255, 0.3), 0 0 60px rgba(125, 249, 255, 0.1);
+
+  /* Glass */
+  --glass-bg: rgba(0, 10, 38, 0.6);
+  --glass-blur: blur(20px);
+  --glass-border: 1px solid rgba(var(--accent-rgb), 0.15);
+
+  /* Grain */
+  --grain-opacity: 0.035;
+
+  /* Transitions */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --transition-fast: 200ms var(--ease-out-quart);
+  --transition-base: 400ms var(--ease-out-expo);
+  --transition-slow: 800ms var(--ease-out-expo);
+
+  /* Z-Index Scale */
+  --z-bubbles: 1;
+  --z-content: 10;
+  --z-grain: 50;
+  --z-hud: 100;
+  --z-nav: 200;
+  --z-loader: 1000;
+}
+
+/* ---------- Typography ---------- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 200;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 100;
+  letter-spacing: -0.04em;
+}
+
+h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 200;
+}
+
+h3 {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 300;
+}
+
+h4 {
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-weight: 300;
+}
+
+h5 {
+  font-size: 1.125rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+}
+
+h6 {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 65ch;
+}
+
+.text-large {
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
+  line-height: 1.6;
+}
+
+.text-small {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.text-mono {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.text-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.text-glow {
+  text-shadow:
+    0 0 10px rgba(var(--accent-rgb), 0.5),
+    0 0 20px rgba(var(--accent-rgb), 0.3),
+    0 0 40px rgba(var(--accent-rgb), 0.15);
+}
+
+/* ---------- Layout ---------- */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+.section {
+  position: relative;
+  padding: var(--section-padding) 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.section-full {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- Selection ---------- */
+::selection {
+  background: rgba(var(--accent-rgb), 0.3);
+  color: #fff;
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--accent-rgb), 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--accent-rgb), 0.5);
+}
+
+/* ---------- Reduced Motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

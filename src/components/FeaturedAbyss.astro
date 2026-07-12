@@ -1,0 +1,292 @@
+---
+// FeaturedAbyss — The Abyss (4000m+)
+---
+
+<section class="featured section" id="featured">
+  <div class="container">
+    <div class="featured__header reveal-up">
+      <h6 class="text-label">▼ 4,000M — THE ABYSS</h6>
+      <h2>The deeper you go,<br/>the greater the discovery</h2>
+    </div>
+
+    <div class="featured__showcase reveal-scale">
+      <div class="featured__image-wrapper">
+        <div class="featured__image-placeholder">
+          <div class="featured__creature">
+            <!-- Bioluminescent deep sea creature silhouette -->
+            <div class="featured__creature-body"></div>
+            <div class="featured__creature-glow"></div>
+            <div class="featured__creature-particles">
+              <span></span><span></span><span></span>
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+          <span class="featured__image-label text-mono">FEATURED PROJECT</span>
+        </div>
+      </div>
+
+      <div class="featured__details reveal-right">
+        <div class="featured__details-header">
+          <span class="text-label">FEATURED CASE STUDY · 2025</span>
+          <h3>Luminara Wellness</h3>
+          <p class="text-large">
+            An immersive digital experience for a luxury wellness brand.
+            From brand identity to a WebGL-powered website that transforms
+            as you explore.
+          </p>
+        </div>
+
+        <div class="featured__details-scope">
+          <h6 class="text-label" style="margin-bottom: 0.75rem;">Scope of Work</h6>
+          <div class="featured__tags">
+            <span class="featured__tag">Brand Identity</span>
+            <span class="featured__tag">Web Design</span>
+            <span class="featured__tag">WebGL / Three.js</span>
+            <span class="featured__tag">Motion Design</span>
+            <span class="featured__tag">Development</span>
+          </div>
+        </div>
+
+        <div class="featured__details-metrics">
+          <div class="featured__metric">
+            <span class="featured__metric-value bio-glow-text">3x</span>
+            <span class="featured__metric-label text-label">Engagement</span>
+          </div>
+          <div class="featured__metric">
+            <span class="featured__metric-value bio-glow-text">42%</span>
+            <span class="featured__metric-label text-label">Conversion ↑</span>
+          </div>
+          <div class="featured__metric">
+            <span class="featured__metric-value bio-glow-text">Awwwards</span>
+            <span class="featured__metric-label text-label">Nominated</span>
+          </div>
+        </div>
+
+        <a class="featured__cta" href="#contact">
+          <span>VIEW CASE STUDY</span>
+          <span class="featured__cta-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .featured {
+    padding: calc(var(--section-padding) * 1.5) 0;
+    min-height: 100vh;
+  }
+
+  .featured__header {
+    margin-bottom: 4rem;
+    text-align: center;
+  }
+
+  .featured__header h6 {
+    margin-bottom: 1rem;
+    color: var(--accent);
+  }
+
+  .featured__showcase {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  /* Image placeholder with deep sea creature */
+  .featured__image-wrapper {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    aspect-ratio: 4/3;
+  }
+
+  .featured__image-placeholder {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(var(--accent-rgb), 0.06) 0%,
+      rgba(0, 0, 0, 0.3) 70%
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: var(--glass-border);
+    border-radius: inherit;
+  }
+
+  .featured__creature {
+    position: relative;
+    width: 120px;
+    height: 120px;
+  }
+
+  .featured__creature-body {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(var(--accent-rgb), 0.05);
+    border: 1px solid rgba(var(--accent-rgb), 0.15);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: creature-drift 8s ease-in-out infinite;
+  }
+
+  .featured__creature-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 140px;
+    height: 140px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(var(--accent-rgb), 0.12) 0%,
+      transparent 70%
+    );
+    animation: glow-breathe 4s ease-in-out infinite;
+  }
+
+  .featured__creature-particles span {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0;
+    animation: particle-float 5s ease-in-out infinite;
+  }
+
+  .featured__creature-particles span:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
+  .featured__creature-particles span:nth-child(2) { top: 30%; left: 80%; animation-delay: 0.8s; }
+  .featured__creature-particles span:nth-child(3) { top: 60%; left: 10%; animation-delay: 1.6s; }
+  .featured__creature-particles span:nth-child(4) { top: 80%; left: 70%; animation-delay: 2.4s; }
+  .featured__creature-particles span:nth-child(5) { top: 50%; left: 50%; animation-delay: 3.2s; }
+  .featured__creature-particles span:nth-child(6) { top: 20%; left: 60%; animation-delay: 4.0s; }
+
+  @keyframes creature-drift {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+    50% { transform: translate(-50%, -50%) translateY(-8px); }
+  }
+
+  @keyframes glow-breathe {
+    0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+  }
+
+  @keyframes particle-float {
+    0% { opacity: 0; transform: translateY(0) scale(0); }
+    20% { opacity: 0.8; transform: translateY(-5px) scale(1); }
+    80% { opacity: 0.4; transform: translateY(-20px) scale(0.8); }
+    100% { opacity: 0; transform: translateY(-30px) scale(0); }
+  }
+
+  .featured__image-label {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.625rem;
+    color: var(--text-ghost);
+    letter-spacing: 0.15em;
+  }
+
+  /* Details */
+  .featured__details {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .featured__details-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .featured__details-header h3 {
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .featured__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .featured__tag {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid rgba(var(--accent-rgb), 0.2);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    background: rgba(var(--accent-rgb), 0.05);
+  }
+
+  .featured__details-metrics {
+    display: flex;
+    gap: 2rem;
+    padding-top: 1.5rem;
+    border-top: var(--border-subtle);
+  }
+
+  .featured__metric {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .featured__metric-value {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 200;
+  }
+
+  .featured__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    padding: 1rem 2rem;
+    border: 1px solid rgba(var(--accent-rgb), 0.3);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+    width: fit-content;
+  }
+
+  .featured__cta:hover {
+    background: rgba(var(--accent-rgb), 0.1);
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.2);
+  }
+
+  .featured__cta-arrow {
+    transition: transform var(--transition-fast);
+  }
+
+  .featured__cta:hover .featured__cta-arrow {
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 768px) {
+    .featured__showcase {
+      grid-template-columns: 1fr;
+    }
+
+    .featured__details-metrics {
+      flex-wrap: wrap;
+    }
+  }
+</style>

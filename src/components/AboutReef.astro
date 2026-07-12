@@ -1,0 +1,180 @@
+---
+// AboutReef — Sunlight Zone (200-500m)
+---
+
+<section class="about section" id="about">
+  <div class="container">
+    <div class="about__header reveal-up">
+      <h6 class="text-label">▼ 200M — SUNLIGHT ZONE</h6>
+      <h2>A studio where design<br/>and engineering converge</h2>
+    </div>
+
+    <div class="about__grid">
+      <div class="about__philosophy reveal-left">
+        <p class="text-large">
+          We craft digital experiences that go beyond the surface.
+          Every pixel is engineered, every interaction is intentional,
+          every project is a deep dive into what's possible.
+        </p>
+        <p>
+          VennStack Studio exists at the intersection of design and technology —
+          where creative vision meets technical precision. We don't hand off designs
+          to developers. We build end-to-end, because the best work happens
+          when craft and code are inseparable.
+        </p>
+      </div>
+
+      <div class="about__values reveal-stagger">
+        <div class="about__value-card glass-card reveal-stagger-item">
+          <div class="about__value-icon bio-pulse">◆</div>
+          <h4>Immersive Craft</h4>
+          <p class="text-small">Every project is an experience. We build interfaces that pull people in and reward exploration.</p>
+        </div>
+
+        <div class="about__value-card glass-card reveal-stagger-item">
+          <div class="about__value-icon bio-pulse" style="animation-delay: -1s;">◆</div>
+          <h4>Engineering-First</h4>
+          <p class="text-small">Design and code are two sides of one discipline. No handoffs, no compromises, no shortcuts.</p>
+        </div>
+
+        <div class="about__value-card glass-card reveal-stagger-item">
+          <div class="about__value-icon bio-pulse" style="animation-delay: -2s;">◆</div>
+          <h4>Depth Over Volume</h4>
+          <p class="text-small">We take fewer projects and go deeper. Quality isn't negotiable — it's the starting point.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="about__stats reveal-stagger">
+      <div class="about__stat reveal-stagger-item">
+        <span class="about__stat-number bio-glow-text">50+</span>
+        <span class="about__stat-label text-label">Projects</span>
+      </div>
+      <div class="about__stat reveal-stagger-item">
+        <span class="about__stat-number bio-glow-text">4+</span>
+        <span class="about__stat-label text-label">Years</span>
+      </div>
+      <div class="about__stat reveal-stagger-item">
+        <span class="about__stat-number bio-glow-text">30+</span>
+        <span class="about__stat-label text-label">Clients</span>
+      </div>
+      <div class="about__stat reveal-stagger-item">
+        <span class="about__stat-number bio-glow-text">∞</span>
+        <span class="about__stat-label text-label">Curiosity</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about {
+    padding: var(--section-padding) 0;
+    min-height: 100vh;
+  }
+
+  .about__header {
+    margin-bottom: 4rem;
+  }
+
+  .about__header h6 {
+    margin-bottom: 1rem;
+    color: var(--accent);
+  }
+
+  .about__header h2 {
+    max-width: 600px;
+  }
+
+  .about__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin-bottom: 5rem;
+  }
+
+  .about__philosophy {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .about__values {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .about__value-card {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  .about__value-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--glow-md);
+  }
+
+  .about__value-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.1);
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(var(--accent-rgb), 0.2);
+  }
+
+  .about__value-card h4 {
+    font-size: 1.125rem;
+    font-weight: 400;
+  }
+
+  .about__value-card p {
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .about__stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    padding-top: 3rem;
+    border-top: var(--border-subtle);
+  }
+
+  .about__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .about__stat-number {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 200;
+  }
+
+  .about__stat-label {
+    font-size: 0.625rem;
+  }
+
+  @media (max-width: 768px) {
+    .about__grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
+    .about__stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
