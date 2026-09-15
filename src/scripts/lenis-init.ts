@@ -1,30 +1,11 @@
 import Lenis from 'lenis';
-
-let lenisInstance: Lenis | null = null;
-
-export function initLenis(): Lenis {
-  // Clean up previous instance
-  if (lenisInstance) {
-    lenisInstance.destroy();
-  }
-
-  lenisInstance = new Lenis({
-    duration: 1.2,
-    easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    smoothWheel: true,
-    touchMultiplier: 1.5,
-  });
-
-  function raf(time: number) {
-    lenisInstance?.raf(time);
-    requestAnimationFrame(raf);
-  }
-
-  requestAnimationFrame(raf);
-
-  return lenisInstance;
-}
-
-export function getLenis(): Lenis | null {
-  return lenisInstance;
+import 'lenis/dist/lenis.css';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+export type LenisRuntime = { lenis: Lenis; dispose: () => void };
+export function initLenis(): LenisRuntime {
+  const lenis = new Lenis({ autoRaf: false, smoothWheel: true, syncTouch: false });
+  const sync = () => ScrollTrigger.update();
+  lenis.on('scroll', sync);
+  let disposed = false;
+  return { lenis, dispose() { if (!disposed) { disposed = true; lenis.off('scroll', sync); lenis.destroy(); } } };
 }

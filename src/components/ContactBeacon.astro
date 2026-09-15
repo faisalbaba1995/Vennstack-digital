@@ -1,11 +1,13 @@
 ---
 // ContactBeacon — The Beacon (ocean floor)
+const accessKey = import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY?.trim();
+const email = 'hello@vennstack.studio';
 ---
 
 <section class="contact section" id="contact">
   <div class="container">
     <div class="contact__header reveal-up">
-      <h6 class="text-label">▼ 6,000M — THE BEACON</h6>
+      <p class="text-label contact__eyebrow">▼ 6,000M — THE BEACON</p>
       <h2>Send a signal<br/>from the deep</h2>
       <p class="text-large">
         You've made it to the ocean floor. Few dive this deep.<br/>
@@ -15,8 +17,8 @@
 
     <div class="contact__grid">
       <!-- Beacon visualization -->
-      <div class="contact__beacon reveal-left" data-parallax="0.03">
-        <div class="contact__beacon-tower">
+      <div class="contact__beacon reveal-left">
+        <div class="contact__beacon-tower" aria-hidden="true">
           <div class="contact__beacon-light">
             <div class="contact__beacon-pulse"></div>
             <div class="contact__beacon-pulse" style="animation-delay: 1s;"></div>
@@ -29,20 +31,7 @@
         <div class="contact__info">
           <div class="contact__info-item">
             <span class="text-label">EMAIL</span>
-            <a href="mailto:hello@vennstack.studio" class="contact__link">hello@vennstack.studio</a>
-          </div>
-          <div class="contact__info-item">
-            <span class="text-label">LOCATION</span>
-            <span class="contact__coords text-mono">34.08°N / 74.79°E</span>
-          </div>
-          <div class="contact__info-item">
-            <span class="text-label">SOCIALS</span>
-            <div class="contact__socials">
-              <a href="#" class="contact__social-link" aria-label="Twitter">𝕏</a>
-              <a href="#" class="contact__social-link" aria-label="Instagram">IG</a>
-              <a href="#" class="contact__social-link" aria-label="LinkedIn">LI</a>
-              <a href="#" class="contact__social-link" aria-label="Dribbble">DR</a>
-            </div>
+            <a href={`mailto:${email}`} class="contact__link">{email}</a>
           </div>
         </div>
       </div>
@@ -51,21 +40,23 @@
       <div class="contact__form-wrapper reveal-right">
         <div class="contact__console glass-card">
           <div class="contact__console-header">
-            <div class="contact__console-dots">
+            <div class="contact__console-dots" aria-hidden="true">
               <span></span><span></span><span></span>
             </div>
             <span class="text-label">TRANSMISSION CONSOLE</span>
             <div class="contact__console-status">
               <span class="contact__console-status-dot"></span>
-              <span class="text-label">ONLINE</span>
+              <span class="text-label">{accessKey ? 'READY' : 'EMAIL'}</span>
             </div>
           </div>
 
+          {accessKey ? (
           <form class="contact__form" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
-            <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY" />
+            <input type="hidden" name="access_key" value={accessKey} />
+            <input type="hidden" name="subject" value="New VennStack Studio enquiry" />
 
             <div class="contact__field">
-              <label class="text-label" for="contact-name">YOUR CALLSIGN</label>
+              <label class="text-label" for="contact-name">Name</label>
               <input
                 type="text"
                 id="contact-name"
@@ -73,11 +64,13 @@
                 placeholder="Name"
                 required
                 autocomplete="name"
+                minlength="2"
+                maxlength="80"
               />
             </div>
 
             <div class="contact__field">
-              <label class="text-label" for="contact-email">FREQUENCY</label>
+              <label class="text-label" for="contact-email">Email</label>
               <input
                 type="email"
                 id="contact-email"
@@ -85,25 +78,35 @@
                 placeholder="email@example.com"
                 required
                 autocomplete="email"
+                maxlength="254"
               />
             </div>
 
             <div class="contact__field">
-              <label class="text-label" for="contact-message">TRANSMISSION</label>
+              <label class="text-label" for="contact-message">Message</label>
               <textarea
                 id="contact-message"
                 name="message"
                 placeholder="What are you building?"
                 rows="4"
                 required
+                minlength="10"
+                maxlength="3000"
               ></textarea>
             </div>
 
             <button type="submit" class="contact__submit" id="contact-submit">
               <span class="contact__submit-text">SEND SIGNAL</span>
-              <span class="contact__submit-icon">◈</span>
+              <span class="contact__submit-icon" aria-hidden="true">◈</span>
             </button>
+            <p class="contact__form-status text-small" id="contact-form-status" role="status" aria-live="polite"></p>
           </form>
+          ) : (
+            <div class="contact__fallback">
+              <p>Tell us a little about your project, your timeline, and what you have in mind.</p>
+              <a class="contact__submit" href={`mailto:${email}?subject=Project%20enquiry`}>EMAIL VENNSTACK STUDIO</a>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -121,7 +124,7 @@
     margin-bottom: 5rem;
   }
 
-  .contact__header h6 {
+  .contact__eyebrow {
     margin-bottom: 1rem;
     color: var(--accent);
   }
@@ -237,6 +240,8 @@
     font-size: 0.875rem;
   }
 
+  .contact__note { color: var(--text-secondary); }
+
   .contact__socials {
     display: flex;
     gap: 1rem;
@@ -316,6 +321,21 @@
     gap: 1.5rem;
   }
 
+  .contact__fallback {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 2rem 1.5rem;
+  }
+
+  .contact__form-status {
+    min-height: 1.5em;
+    color: var(--text-secondary);
+  }
+
+  .contact__form-status[data-state="success"] { color: var(--accent); }
+  .contact__form-status[data-state="error"] { color: #ffb4ab; }
+
   .contact__field {
     display: flex;
     flex-direction: column;
@@ -329,7 +349,7 @@
     font-weight: 400;
     color: var(--text-primary);
     background: rgba(var(--accent-rgb), 0.04);
-    border: 1px solid rgba(var(--accent-rgb), 0.12);
+    border: 1px solid #779bab;
     border-radius: var(--radius-sm);
     padding: 0.875rem 1rem;
     outline: none;
@@ -394,3 +414,5 @@
     }
   }
 </style>
+
+{accessKey && <script src="../scripts/contact-form.ts"></script>}

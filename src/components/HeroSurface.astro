@@ -3,8 +3,14 @@
 ---
 
 <section class="hero section" id="hero">
+  <svg class="hero__currents" viewBox="0 0 1000 700" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.5" opacity=".28">
+      <ellipse cx="390" cy="330" rx="215" ry="245" transform="rotate(-24 390 330)" />
+      <ellipse cx="610" cy="330" rx="215" ry="245" transform="rotate(24 610 330)" />
+    </g>
+  </svg>
   <!-- Light rays from above -->
-  <div class="light-rays">
+  <div class="light-rays" aria-hidden="true">
     <div class="god-ray"></div>
     <div class="god-ray"></div>
     <div class="god-ray"></div>
@@ -13,11 +19,11 @@
   </div>
 
   <!-- Caustic light patterns -->
-  <div class="caustics"></div>
+  <div class="caustics" aria-hidden="true"></div>
 
   <!-- Wave SVG at top -->
-  <div class="hero__wave">
-    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+  <div class="hero__wave" aria-hidden="true">
+    <svg viewBox="0 0 1440 120" preserveAspectRatio="none" focusable="false">
       <path class="hero__wave-path hero__wave-path--1" d="M0,60 C360,120 720,0 1080,60 C1260,90 1380,60 1440,60 L1440,0 L0,0 Z" fill="rgba(72,202,228,0.08)"/>
       <path class="hero__wave-path hero__wave-path--2" d="M0,40 C240,80 480,20 720,50 C960,80 1200,30 1440,50 L1440,0 L0,0 Z" fill="rgba(72,202,228,0.05)"/>
     </svg>
@@ -26,7 +32,7 @@
   <div class="container hero__content">
     <div class="hero__label reveal-up text-label">
       <span class="hero__dot sonar-ping"></span>
-      DESIGN STUDIO · EST. 2024
+      INDEPENDENT DESIGN &amp; DEVELOPMENT STUDIO
     </div>
 
     <h1 class="hero__title reveal-up">
@@ -39,7 +45,12 @@
       The deeper you go, the more you discover.
     </p>
 
-    <div class="hero__scroll-cta reveal-up" data-parallax="-0.1">
+    <nav class="hero__actions reveal-up" aria-label="Primary">
+      <a class="hero__action hero__action--primary" href="#projects">Explore our work</a>
+      <a class="hero__action" href="#contact">Discuss a project</a>
+    </nav>
+
+    <div class="hero__scroll-cta reveal-up" aria-hidden="true">
       <div class="hero__scroll-line"></div>
       <span class="hero__scroll-text text-mono">SCROLL TO DIVE</span>
       <span class="hero__scroll-arrow">▼</span>
@@ -48,6 +59,10 @@
 </section>
 
 <style>
+  .hero__currents { position: absolute; width: min(1100px, 150vw); height: 100%; pointer-events: none; color: var(--accent); }
+  :global(html[data-renderer="ready"]) .hero__currents { visibility: hidden; }
+  :global(html[data-renderer="ready"]) .light-rays,
+  :global(html[data-renderer="ready"]) .caustics { visibility: hidden; }
   .hero {
     min-height: 100vh;
     display: flex;
@@ -132,9 +147,32 @@
   }
 
   .hero__subtitle {
+    text-shadow: 0 2px 12px #062a43, 0 0 4px #062a43;
     max-width: 500px;
     text-align: center;
     color: var(--text-secondary);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .hero__action {
+    background: #092a3d;
+    padding: 0.8rem 1.25rem;
+    border: 1px solid rgba(var(--accent-rgb), 0.35);
+    border-radius: var(--radius-sm);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+  }
+
+  .hero__action--primary {
+    background: #143e50;
   }
 
   .hero__scroll-cta {

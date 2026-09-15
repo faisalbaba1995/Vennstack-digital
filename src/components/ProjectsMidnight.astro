@@ -49,10 +49,11 @@ const projects = [
 <section class="projects section" id="projects">
   <div class="container">
     <div class="projects__header reveal-up">
-      <h6 class="text-label">▼ 1,000M — MIDNIGHT ZONE</h6>
+      <p class="text-label projects__eyebrow">▼ 1,000M — MIDNIGHT ZONE</p>
       <h2>In the dark,<br/>the work glows</h2>
       <p class="text-large">
-        Hover to illuminate. Click to explore.
+        Selected project previews. Descriptions and imagery are provisional;
+        full case studies are not published yet.
       </p>
     </div>
 
@@ -64,13 +65,13 @@ const projects = [
           style={`--card-delay: ${i * 0.15}s`}
         >
           {/* Angler fish lantern glow */}
-          <div class="projects__card-lantern">
+          <div class="projects__card-lantern" aria-hidden="true">
             <div class="projects__card-lantern-dot"></div>
             <div class="projects__card-lantern-stem"></div>
           </div>
 
           {/* Placeholder image area */}
-          <div class="projects__card-image">
+          <div class="projects__card-image" aria-hidden="true">
             <div class="projects__card-image-placeholder">
               <span class="projects__card-image-number text-mono">
                 {String(i + 1).padStart(2, '0')}
@@ -81,14 +82,13 @@ const projects = [
           <div class="projects__card-content">
             <div class="projects__card-meta">
               <span class="text-label">{project.category}</span>
-              <span class="text-label">{project.year}</span>
             </div>
             <h3 class="projects__card-title">{project.title}</h3>
             <p class="projects__card-desc text-small">{project.description}</p>
           </div>
 
           {/* Bioluminescent border glow */}
-          <div class="projects__card-glow-border"></div>
+          <div class="projects__card-glow-border" aria-hidden="true"></div>
         </article>
       ))}
     </div>
@@ -105,7 +105,7 @@ const projects = [
     margin-bottom: 4rem;
   }
 
-  .projects__header h6 {
+  .projects__eyebrow {
     margin-bottom: 1rem;
     color: var(--accent);
   }
@@ -123,7 +123,6 @@ const projects = [
   .projects__card {
     position: relative;
     overflow: hidden;
-    cursor: pointer;
     transition: transform var(--transition-base), box-shadow var(--transition-base);
   }
 
@@ -240,7 +239,7 @@ const projects = [
   }
 
   .projects__card-desc {
-    color: var(--text-muted);
+    color: var(--text-secondary);
     line-height: 1.5;
   }
 

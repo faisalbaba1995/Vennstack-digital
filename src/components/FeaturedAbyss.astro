@@ -5,14 +5,14 @@
 <section class="featured section" id="featured">
   <div class="container">
     <div class="featured__header reveal-up">
-      <h6 class="text-label">▼ 4,000M — THE ABYSS</h6>
+      <p class="text-label featured__eyebrow">▼ 4,000M — THE ABYSS</p>
       <h2>The deeper you go,<br/>the greater the discovery</h2>
     </div>
 
     <div class="featured__showcase reveal-scale">
       <div class="featured__image-wrapper">
-        <div class="featured__image-placeholder">
-          <div class="featured__creature">
+        <div class="featured__image-placeholder" role="img" aria-label="Abstract placeholder artwork for the unpublished Luminara Wellness case study">
+          <div class="featured__creature" aria-hidden="true">
             <!-- Bioluminescent deep sea creature silhouette -->
             <div class="featured__creature-body"></div>
             <div class="featured__creature-glow"></div>
@@ -21,23 +21,22 @@
               <span></span><span></span><span></span>
             </div>
           </div>
-          <span class="featured__image-label text-mono">FEATURED PROJECT</span>
+          <span class="featured__image-label text-mono">CONCEPT PREVIEW</span>
         </div>
       </div>
 
       <div class="featured__details reveal-right">
         <div class="featured__details-header">
-          <span class="text-label">FEATURED CASE STUDY · 2025</span>
+          <span class="text-label">UNPUBLISHED CASE STUDY PREVIEW</span>
           <h3>Luminara Wellness</h3>
           <p class="text-large">
-            An immersive digital experience for a luxury wellness brand.
-            From brand identity to a WebGL-powered website that transforms
-            as you explore.
+            A concept direction exploring identity, interface design and motion
+            for a wellness experience. Project details and outcomes are not yet published.
           </p>
         </div>
 
         <div class="featured__details-scope">
-          <h6 class="text-label" style="margin-bottom: 0.75rem;">Scope of Work</h6>
+          <h4 class="text-label featured__scope-heading">Concept areas</h4>
           <div class="featured__tags">
             <span class="featured__tag">Brand Identity</span>
             <span class="featured__tag">Web Design</span>
@@ -47,24 +46,9 @@
           </div>
         </div>
 
-        <div class="featured__details-metrics">
-          <div class="featured__metric">
-            <span class="featured__metric-value bio-glow-text">3x</span>
-            <span class="featured__metric-label text-label">Engagement</span>
-          </div>
-          <div class="featured__metric">
-            <span class="featured__metric-value bio-glow-text">42%</span>
-            <span class="featured__metric-label text-label">Conversion ↑</span>
-          </div>
-          <div class="featured__metric">
-            <span class="featured__metric-value bio-glow-text">Awwwards</span>
-            <span class="featured__metric-label text-label">Nominated</span>
-          </div>
-        </div>
-
         <a class="featured__cta" href="#contact">
-          <span>VIEW CASE STUDY</span>
-          <span class="featured__cta-arrow">→</span>
+          <span>DISCUSS A PROJECT</span>
+          <span class="featured__cta-arrow" aria-hidden="true">→</span>
         </a>
       </div>
     </div>
@@ -82,7 +66,7 @@
     text-align: center;
   }
 
-  .featured__header h6 {
+  .featured__eyebrow {
     margin-bottom: 1rem;
     color: var(--accent);
   }
@@ -193,8 +177,10 @@
     left: 50%;
     transform: translateX(-50%);
     font-size: 0.625rem;
-    color: var(--text-ghost);
+    color: var(--text-secondary);
     letter-spacing: 0.15em;
+    width: calc(100% - 3rem);
+    text-align: center;
   }
 
   /* Details */
@@ -220,6 +206,10 @@
     gap: 0.5rem;
   }
 
+  .featured__scope-heading {
+    margin-bottom: 0.75rem;
+  }
+
   .featured__tag {
     font-family: var(--font-mono);
     font-size: 0.6875rem;
@@ -231,24 +221,6 @@
     background: rgba(var(--accent-rgb), 0.05);
   }
 
-  .featured__details-metrics {
-    display: flex;
-    gap: 2rem;
-    padding-top: 1.5rem;
-    border-top: var(--border-subtle);
-  }
-
-  .featured__metric {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .featured__metric-value {
-    font-family: var(--font-heading);
-    font-size: 1.5rem;
-    font-weight: 200;
-  }
 
   .featured__cta {
     display: inline-flex;
@@ -285,8 +257,5 @@
       grid-template-columns: 1fr;
     }
 
-    .featured__details-metrics {
-      flex-wrap: wrap;
-    }
   }
 </style>

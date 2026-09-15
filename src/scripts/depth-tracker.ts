@@ -1,71 +1,28 @@
-const ZONES = [
-  { name: 'SURFACE',        minDepth: 0,    maxDepth: 200 },
-  { name: 'SUNLIGHT ZONE',  minDepth: 200,  maxDepth: 500 },
-  { name: 'TWILIGHT ZONE',  minDepth: 500,  maxDepth: 1000 },
-  { name: 'MIDNIGHT ZONE',  minDepth: 1000, maxDepth: 4000 },
-  { name: 'THE ABYSS',      minDepth: 4000, maxDepth: 6000 },
-  { name: 'HADAL ZONE',     minDepth: 6000, maxDepth: 11000 },
-];
-
-const MAX_DEPTH = 11000; // Mariana Trench depth
-
-let currentDepth = 0;
-let displayDepth = 0;
-let rafId: number | null = null;
-
-function getZoneName(depth: number): string {
-  for (const zone of ZONES) {
-    if (depth >= zone.minDepth && depth < zone.maxDepth) return zone.name;
-  }
-  return ZONES[ZONES.length - 1].name;
-}
-
-function formatDepth(depth: number): string {
-  if (depth >= 1000) {
-    return Math.floor(depth).toLocaleString();
-  }
-  return Math.floor(depth).toString();
-}
-
-export function initDepthTracker() {
-  const depthValue = document.getElementById('depth-value');
-  const depthZone = document.getElementById('depth-zone');
-  const depthPressure = document.getElementById('depth-pressure');
-
-  if (!depthValue || !depthZone || !depthPressure) return;
-
-  function updateDepthFromScroll() {
-    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const scrollProgress = Math.max(0, Math.min(1, window.scrollY / scrollHeight));
-    currentDepth = scrollProgress * MAX_DEPTH;
-  }
-
-  function animate() {
-    // Smooth interpolation for display
-    displayDepth += (currentDepth - displayDepth) * 0.08;
-
-    if (Math.abs(displayDepth - currentDepth) < 0.5) {
-      displayDepth = currentDepth;
+import { mixHex, sampleDepth, type DepthGeometry } from '../experience/depth-model';
+export function initDepthTracker(getGeometry: () => DepthGeometry) {
+  const value = document.getElementById('depth-value');
+  const zone = document.getElementById('depth-zone');
+  const pressure = document.getElementById('depth-pressure');
+  const ocean = document.getElementById('ocean-bg');
+  let lastValue = '', lastZone = '', lastPressure = '', lastPalette = '';
+  return { update(scrollY = window.scrollY) {
+    const state = sampleDepth(scrollY, getGeometry());
+    const nextValue = Math.round(state.depth).toLocaleString();
+    const nextPressure = `scaleX(${state.progress.toFixed(4)})`;
+    const top = mixHex(state.zone.top, state.next.top, state.mix);
+    const bottom = mixHex(state.zone.bottom, state.next.bottom, state.mix);
+    const accent = mixHex(state.zone.accent, state.next.accent, state.mix);
+    if (value && nextValue !== lastValue) value.textContent = lastValue = nextValue;
+    if (zone && state.zone.zone !== lastZone) zone.textContent = lastZone = state.zone.zone;
+    if (pressure && nextPressure !== lastPressure) pressure.style.transform = lastPressure = nextPressure;
+    const palette = `${top}|${bottom}|${accent}`;
+    if (palette !== lastPalette) {
+      if (ocean) ocean.style.background = `linear-gradient(180deg, ${top}, ${bottom})`;
+      const number = Number.parseInt(accent.slice(1), 16);
+      document.documentElement.style.setProperty('--accent', accent);
+      document.documentElement.style.setProperty('--accent-rgb', `${number >> 16}, ${(number >> 8) & 255}, ${number & 255}`);
+      lastPalette = palette;
     }
-
-    depthValue!.textContent = formatDepth(displayDepth);
-    depthZone!.textContent = getZoneName(displayDepth);
-    depthPressure!.style.width = `${(displayDepth / MAX_DEPTH) * 100}%`;
-
-    rafId = requestAnimationFrame(animate);
-  }
-
-  window.addEventListener('scroll', updateDepthFromScroll, { passive: true });
-  updateDepthFromScroll();
-  rafId = requestAnimationFrame(animate);
-
-  // Cleanup
-  document.addEventListener('astro:before-swap', () => {
-    window.removeEventListener('scroll', updateDepthFromScroll);
-    if (rafId) cancelAnimationFrame(rafId);
-  }, { once: true });
-}
-
-export function getCurrentDepth(): number {
-  return currentDepth;
+    return state;
+  } };
 }

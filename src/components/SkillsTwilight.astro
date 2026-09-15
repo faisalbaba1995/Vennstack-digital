@@ -19,31 +19,31 @@ const skills = [
 <section class="skills section" id="skills">
   <div class="container">
     <div class="skills__header reveal-up">
-      <h6 class="text-label">▼ 500M — TWILIGHT ZONE</h6>
+      <p class="text-label skills__eyebrow">▼ 500M — TWILIGHT ZONE</p>
       <h2>Where light fades,<br/>skills illuminate</h2>
       <p class="text-large">
-        Each capability glows in the dark — hover to see them pulse.
+        Design and engineering capabilities brought together in one practice.
       </p>
     </div>
 
-    <div class="skills__grid reveal-stagger">
+    <ul class="skills__grid reveal-stagger" aria-label="Studio capabilities">
       {skills.map((skill, i) => (
-        <div
+        <li
           class={`skills__orb glass-card reveal-stagger-item`}
           data-category={skill.category}
           data-glow={skill.glow}
           style={`animation-delay: ${i * 0.3}s;`}
         >
-          <div class="skills__orb-glow"></div>
+          <div class="skills__orb-glow" aria-hidden="true"></div>
           <span class="skills__orb-name">{skill.name}</span>
           <span class="skills__orb-category text-label">{skill.category}</span>
-        </div>
+        </li>
       ))}
-    </div>
+    </ul>
 
     <!-- Sonar radar visualization -->
-    <div class="skills__radar reveal-scale" data-parallax="0.05">
-      <svg class="skills__radar-svg" viewBox="0 0 300 300">
+    <div class="skills__radar reveal-scale" aria-hidden="true">
+      <svg class="skills__radar-svg" viewBox="0 0 300 300" focusable="false">
         <circle cx="150" cy="150" r="140" fill="none" stroke="rgba(72,202,228,0.08)" stroke-width="0.5"/>
         <circle cx="150" cy="150" r="100" fill="none" stroke="rgba(72,202,228,0.06)" stroke-width="0.5"/>
         <circle cx="150" cy="150" r="60" fill="none" stroke="rgba(72,202,228,0.04)" stroke-width="0.5"/>
@@ -67,7 +67,7 @@ const skills = [
     margin-bottom: 4rem;
   }
 
-  .skills__header h6 {
+  .skills__eyebrow {
     margin-bottom: 1rem;
     color: var(--accent);
   }
@@ -82,6 +82,9 @@ const skills = [
     gap: 1rem;
     position: relative;
     z-index: 2;
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
 
   .skills__orb {

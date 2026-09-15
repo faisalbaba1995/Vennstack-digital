@@ -1,5 +1,6 @@
 ---
 // Footer — Ocean Floor
+const buildYear = new Date().getFullYear();
 ---
 
 <footer class="footer" id="footer">
@@ -23,16 +24,16 @@
 
     <div class="footer__bottom">
       <span class="footer__copyright text-mono">
-        © 2026 VENNSTACK STUDIO. ALL RIGHTS RESERVED.
+        © {buildYear} VENNSTACK STUDIO. ALL RIGHTS RESERVED.
       </span>
       <span class="footer__coordinates text-mono">
-        34.08°N / 74.79°E · SURFACE TIME: <span id="footer-time"></span>
+        ASIA / KOLKATA
       </span>
     </div>
   </div>
 
   <!-- Ocean floor particles -->
-  <div class="footer__sediment">
+  <div class="footer__sediment" aria-hidden="true">
     <div class="footer__sediment-line"></div>
   </div>
 </footer>
@@ -91,7 +92,7 @@
   }
 
   .footer__tagline {
-    color: var(--text-muted);
+    color: var(--text-secondary);
   }
 
   .footer__depth-stamp {
@@ -127,13 +128,13 @@
 
   .footer__copyright {
     font-size: 0.625rem;
-    color: var(--text-ghost);
+    color: var(--text-secondary);
     letter-spacing: 0.05em;
   }
 
   .footer__coordinates {
     font-size: 0.625rem;
-    color: var(--text-ghost);
+    color: var(--text-secondary);
   }
 
   /* Ocean floor sediment */
@@ -176,22 +177,3 @@
     }
   }
 </style>
-
-<script>
-  document.addEventListener('astro:page-load', () => {
-    const timeEl = document.getElementById('footer-time');
-    if (timeEl) {
-      function updateTime() {
-        const now = new Date();
-        timeEl!.textContent = now.toLocaleTimeString('en-US', {
-          hour12: false,
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        });
-      }
-      updateTime();
-      setInterval(updateTime, 1000);
-    }
-  });
-</script>

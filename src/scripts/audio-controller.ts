@@ -1,128 +1,104 @@
-let audioCtx: AudioContext | null = null;
-let gainNode: GainNode | null = null;
-let noiseSource: AudioBufferSourceNode | null = null;
-let lfoFilter: BiquadFilterNode | null = null;
-let isPlaying = false;
-
-// Generate underwater ambient sound using Web Audio API
-// No external audio file needed - pure synthesis
-function createUnderwaterAmbience(ctx: AudioContext): AudioBufferSourceNode {
-  const sampleRate = ctx.sampleRate;
-  const duration = 10; // Loop length in seconds
-  const bufferSize = sampleRate * duration;
-  const buffer = ctx.createBuffer(2, bufferSize, sampleRate);
-
-  for (let channel = 0; channel < 2; channel++) {
-    const data = buffer.getChannelData(channel);
-    for (let i = 0; i < bufferSize; i++) {
-      // Brown noise (deeper, more oceanic than white noise)
-      const white = Math.random() * 2 - 1;
-      if (i > 0) {
-        data[i] = (data[i - 1] + 0.02 * white) / 1.02;
-      } else {
-        data[i] = white * 0.02;
-      }
-      // Add subtle low-frequency rumble
-      data[i] += Math.sin(2 * Math.PI * 0.5 * i / sampleRate) * 0.003;
-      // Add whale-like distant tones
-      data[i] += Math.sin(2 * Math.PI * 52 * i / sampleRate) * 0.001 *
-        Math.sin(2 * Math.PI * 0.1 * i / sampleRate);
-      // Add bubble-like high frequency pings (very subtle)
-      if (Math.random() < 0.0001) {
-        for (let j = 0; j < Math.min(200, bufferSize - i); j++) {
-          data[i + j] += Math.sin(2 * Math.PI * (800 + Math.random() * 1200) * j / sampleRate) *
-            Math.exp(-j * 0.03) * 0.005;
-        }
-      }
-    }
-  }
-
-  const source = ctx.createBufferSource();
-  source.buffer = buffer;
-  source.loop = true;
-  return source;
-}
-
-function startAudio() {
-  if (isPlaying) return;
-
-  audioCtx = new AudioContext();
-  gainNode = audioCtx.createGain();
-  gainNode.gain.value = 0;
-
-  // Low-pass filter that shifts with a subtle LFO for movement
-  lfoFilter = audioCtx.createBiquadFilter();
-  lfoFilter.type = 'lowpass';
-  lfoFilter.frequency.value = 400;
-  lfoFilter.Q.value = 1;
-
-  // Create a very subtle LFO to modulate the filter
-  const lfo = audioCtx.createOscillator();
-  const lfoGain = audioCtx.createGain();
-  lfo.frequency.value = 0.05; // Very slow
-  lfoGain.gain.value = 100;
-  lfo.connect(lfoGain);
-  lfoGain.connect(lfoFilter.frequency);
-  lfo.start();
-
-  noiseSource = createUnderwaterAmbience(audioCtx);
-  noiseSource.connect(lfoFilter);
-  lfoFilter.connect(gainNode);
-  gainNode.connect(audioCtx.destination);
-
-  noiseSource.start();
-
-  // Fade in
-  gainNode.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 2);
-
-  isPlaying = true;
-}
-
-function stopAudio() {
-  if (!isPlaying || !gainNode || !audioCtx) return;
-
-  // Fade out
-  gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1);
-
-  setTimeout(() => {
-    noiseSource?.stop();
-    audioCtx?.close();
-    audioCtx = null;
-    gainNode = null;
-    noiseSource = null;
-    lfoFilter = null;
-    isPlaying = false;
-  }, 1200);
-}
-
 export function initAudio() {
-  const toggle = document.getElementById('audio-toggle');
-  if (!toggle) return;
+  const button = document.getElementById('audio-toggle');
+  if (!(button instanceof HTMLButtonElement)) return { dispose() {} };
+  const label = button.querySelector<HTMLElement>('[data-audio-label]');
+  const status = document.getElementById('audio-status');
+  const abort = new AbortController();
+  let context: AudioContext | null = null;
+  let source: AudioBufferSourceNode | null = null;
+  let gain: GainNode | null = null;
+  let desired = false;
+  let disposed = false;
+  let operation = 0;
+  let suspendTimer: number | undefined;
 
-  const iconOn = toggle.querySelector('.audio-toggle__icon--on') as HTMLElement;
-  const iconOff = toggle.querySelector('.audio-toggle__icon--off') as HTMLElement;
+  function paint(message?: string) {
+    const active = desired && !document.hidden && context?.state === 'running';
+    button!.setAttribute('aria-pressed', String(active));
+    button!.setAttribute('aria-label', active ? 'Ambient sound, Sound on' : 'Ambient sound, Sound off');
+    if (label) label.textContent = active ? 'Sound on' : 'Sound off';
+    if (status && message !== undefined) status.textContent = message;
+  }
 
-  function updateIcons() {
-    if (iconOn && iconOff) {
-      iconOn.style.display = isPlaying ? 'block' : 'none';
-      iconOff.style.display = isPlaying ? 'none' : 'block';
+  function releaseGraph() {
+    window.clearTimeout(suspendTimer);
+    suspendTimer = undefined;
+    try { source?.stop(); } catch { /* A partial graph may already be stopped. */ }
+    if (context && context.state !== 'closed') void context.close().catch(() => {});
+    source = null; gain = null; context = null;
+  }
+
+  function createGraph() {
+    const ctx = new AudioContext();
+    context = ctx;
+    gain = ctx.createGain();
+    gain.gain.value = 0;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 420;
+    const length = Math.floor(ctx.sampleRate * 4);
+    const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    let brown = 0;
+    for (let i = 0; i < length; i++) {
+      brown = (brown + .02 * (Math.random() * 2 - 1)) / 1.02;
+      // Short fades prevent a discontinuity at the loop boundary.
+      const edge = Math.min(1, i / (ctx.sampleRate * .04), (length - 1 - i) / (ctx.sampleRate * .04));
+      data[i] = brown * edge;
+    }
+    source = ctx.createBufferSource();
+    source.buffer = buffer; source.loop = true;
+    source.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+    source.start();
+    ctx.addEventListener('statechange', () => paint(), { signal: abort.signal });
+    return ctx;
+  }
+
+  async function synchronize() {
+    const token = ++operation;
+    window.clearTimeout(suspendTimer);
+    suspendTimer = undefined;
+    const shouldPlay = desired && !document.hidden;
+    try {
+      if (shouldPlay) {
+        const ctx = context ?? createGraph();
+        // Called synchronously from the user's click before awaiting.
+        await ctx.resume();
+        if (disposed || token !== operation || ctx !== context || !gain) return;
+        gain.gain.cancelScheduledValues(ctx.currentTime);
+        gain.gain.setValueAtTime(gain.gain.value, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(.12, ctx.currentTime + .4);
+        paint('Ambient sound playing.');
+      } else {
+        paint(desired ? 'Ambient sound paused while this tab is hidden.' : 'Ambient sound off.');
+        if (!context || !gain) return;
+        const ctx = context;
+        gain.gain.cancelScheduledValues(ctx.currentTime);
+        gain.gain.setValueAtTime(gain.gain.value, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, ctx.currentTime + .15);
+        suspendTimer = window.setTimeout(() => {
+          suspendTimer = undefined;
+          if (disposed || token !== operation || ctx !== context) return;
+          void ctx.suspend().catch(() => {});
+        }, 180);
+      }
+    } catch {
+      if (disposed || token !== operation) return;
+      desired = false;
+      releaseGraph();
+      paint('Ambient sound unavailable. You can continue browsing with sound off.');
     }
   }
 
-  toggle.addEventListener('click', () => {
-    if (isPlaying) {
-      stopAudio();
-      setTimeout(updateIcons, 100);
-    } else {
-      startAudio();
-      updateIcons();
+  button.addEventListener('click', () => { desired = !desired; void synchronize(); }, { signal: abort.signal });
+  document.addEventListener('visibilitychange', () => { if (context) void synchronize(); }, { signal: abort.signal });
+  button.hidden = false;
+  paint('Ambient sound off.');
+  return {
+    dispose() {
+      if (disposed) return;
+      disposed = true; desired = false; operation++;
+      abort.abort(); releaseGraph(); paint(); button.hidden = true;
     }
-  });
-
-  updateIcons();
-
-  // Cleanup
-  document.addEventListener('astro:before-swap', () => {
-    stopAudio();
-  }, { once: true });
+  };
 }

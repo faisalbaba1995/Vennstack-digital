@@ -3,55 +3,18 @@
    ============================================ */
 
 /* ---------- Ocean Background System ---------- */
-/* The body background gradient is controlled via JS
-   by interpolating --depth (0-1) across these zones */
+/* The runtime derives these colors from the measured section depth anchors. */
 
 .ocean-bg {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  transition: background 0.3s ease;
   background: linear-gradient(
     180deg,
-    var(--bg-current, #0077B6) 0%,
-    var(--bg-deep-current, #023E8A) 100%
+    var(--bg-current, #07364d) 0%,
+    var(--bg-deep-current, #061c2c) 100%
   );
-}
-
-/* ---------- Depth Zone Presets ---------- */
-/* These are referenced by JS to interpolate between */
-
-/* Surface: 0-200m */
-.zone-surface {
-  --zone-bg: #0077B6;
-  --zone-bg-deep: #023E8A;
-  --zone-accent: #48CAE4;
-  --zone-text: #CAF0F8;
-}
-
-/* Twilight: 200-1000m */
-.zone-twilight {
-  --zone-bg: #023E8A;
-  --zone-bg-deep: #03045E;
-  --zone-accent: #00B4D8;
-  --zone-text: #90E0EF;
-}
-
-/* Midnight: 1000-4000m */
-.zone-midnight {
-  --zone-bg: #03045E;
-  --zone-bg-deep: #010A26;
-  --zone-accent: #7DF9FF;
-  --zone-text: rgba(255, 255, 255, 0.7);
-}
-
-/* Abyss: 4000m+ */
-.zone-abyss {
-  --zone-bg: #010A26;
-  --zone-bg-deep: #000000;
-  --zone-accent: #39FF14;
-  --zone-text: rgba(255, 255, 255, 0.5);
 }
 
 /* ---------- Light Rays ---------- */
@@ -220,11 +183,14 @@
   border: 1px solid rgba(var(--accent-rgb), 0.2);
   animation: ripple-expand 4s ease-out infinite;
   pointer-events: none;
+  width: 400px;
+  height: 400px;
+  margin: -200px;
 }
 
 @keyframes ripple-expand {
-  0% { width: 0; height: 0; opacity: 0.6; }
-  100% { width: 400px; height: 400px; opacity: 0; margin: -200px; }
+  0% { transform: scale(0); opacity: 0.6; }
+  100% { transform: scale(1); opacity: 0; }
 }
 
 /* ---------- Sonar Ping ---------- */
@@ -246,22 +212,3 @@
   0% { transform: scale(1); opacity: 0.8; }
   100% { transform: scale(2.5); opacity: 0; }
 }
-
-/* ---------- Depth-based opacity utility ---------- */
-/* These get toggled via JS as user scrolls deeper */
-.depth-fade-surface { opacity: 1; transition: opacity 1s ease; }
-.depth-fade-twilight { opacity: 0; transition: opacity 1s ease; }
-.depth-fade-midnight { opacity: 0; transition: opacity 1s ease; }
-.depth-fade-abyss { opacity: 0; transition: opacity 1s ease; }
-
-.is-twilight .depth-fade-surface { opacity: 0.3; }
-.is-twilight .depth-fade-twilight { opacity: 1; }
-
-.is-midnight .depth-fade-surface { opacity: 0; }
-.is-midnight .depth-fade-twilight { opacity: 0.3; }
-.is-midnight .depth-fade-midnight { opacity: 1; }
-
-.is-abyss .depth-fade-surface { opacity: 0; }
-.is-abyss .depth-fade-twilight { opacity: 0; }
-.is-abyss .depth-fade-midnight { opacity: 0.3; }
-.is-abyss .depth-fade-abyss { opacity: 1; }
