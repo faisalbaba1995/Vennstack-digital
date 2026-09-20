@@ -5,7 +5,7 @@ const projects = [
     id: 'project-1',
     title: 'Luminara',
     category: 'BRAND · WEB',
-    description: 'Complete brand identity and immersive website for a luxury wellness brand.',
+    description: 'A wellness identity and interface concept. Explore the original placeholder artwork and proposed direction.',
     year: '2025',
   },
   {
@@ -83,7 +83,7 @@ const projects = [
             <div class="projects__card-meta">
               <span class="text-label">{project.category}</span>
             </div>
-            <h3 class="projects__card-title">{project.title}</h3>
+            <h3 class="projects__card-title">{i === 0 ? <a href="/work/luminara/">{project.title} — concept preview →</a> : project.title}</h3>
             <p class="projects__card-desc text-small">{project.description}</p>
           </div>
 

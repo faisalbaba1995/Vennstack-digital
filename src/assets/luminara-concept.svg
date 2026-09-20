@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <defs>
+    <linearGradient id="background" x2="1" y2="1"><stop stop-color="#163f49"/><stop offset="1" stop-color="#071923"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#d7e9c4" stop-opacity=".22"/><stop offset="1" stop-color="#8cc6ad" stop-opacity="0"/></radialGradient>
+    <linearGradient id="ribbon"><stop stop-color="#b7ddcb"/><stop offset=".5" stop-color="#d7e9c4"/><stop offset="1" stop-color="#527e75"/></linearGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#background)"/>
+  <circle cx="1030" cy="470" r="480" fill="url(#light)"/>
+  <g fill="none" stroke="url(#ribbon)" stroke-width="2">
+    <ellipse cx="930" cy="480" rx="220" ry="310" transform="rotate(-25 930 480)"/>
+    <ellipse cx="1090" cy="480" rx="220" ry="310" transform="rotate(25 1090 480)"/>
+  </g>
+  <g fill="#dbe9df">
+    <rect x="130" y="190" width="90" height="3"/>
+    <rect x="130" y="345" width="370" height="12" rx="6" opacity=".8"/>
+    <rect x="130" y="390" width="280" height="12" rx="6" opacity=".8"/>
+    <rect x="130" y="470" width="320" height="4" opacity=".35"/>
+    <rect x="130" y="495" width="260" height="4" opacity=".35"/>
+    <rect x="130" y="550" width="145" height="48" rx="24" fill="none" stroke="#dbe9df" opacity=".6"/>
+  </g>
+  <path d="M130 825H1470" stroke="#9bc6b7" opacity=".3"/>
+  <g fill="#9bc6b7" opacity=".5"><circle cx="137" cy="885" r="7"/><circle cx="180" cy="885" r="7"/><circle cx="223" cy="885" r="7"/></g>
+</svg>

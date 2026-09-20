@@ -24,7 +24,7 @@ build('configured', { PUBLIC_WEB3FORMS_ACCESS_KEY: 'playwright-fake-access-key' 
 const mime = {
   '.css': 'text/css; charset=utf-8', '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8',
-  '.svg': 'image/svg+xml', '.woff2': 'font/woff2',
+  '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.avif': 'image/avif', '.webp': 'image/webp', '.png': 'image/png',
 };
 
 function serve(directory, port) {

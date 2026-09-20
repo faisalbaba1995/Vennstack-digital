@@ -14,10 +14,12 @@ const {
   title = 'VennStack Studio — Design & Engineering',
   description = 'VennStack Studio brings design and engineering together to craft immersive digital experiences. Explore our capabilities and start a conversation.'
 } = Astro.props;
+const isHome = Astro.url.pathname === '/';
+const homeAnchor = (id: string) => `${isHome ? '' : '/'}#${id}`;
 ---
 
 <!DOCTYPE html>
-<html lang="en" data-motion="paused">
+<html lang="en" data-motion="paused" data-experience={isHome ? 'ocean' : 'reading'}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -34,41 +36,41 @@ const {
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <div class="ocean-bg" id="ocean-bg" aria-hidden="true" transition:persist></div>
-    <canvas id="ocean-canvas" aria-hidden="true"></canvas>
+    {isHome && <canvas id="ocean-canvas" aria-hidden="true"></canvas>}
     <div class="grain-overlay" aria-hidden="true"></div>
 
     <header class="site-header">
       <nav class="site-nav" aria-label="Main navigation">
-        <a class="site-nav__brand" href="#hero" aria-label="VennStack Studio, back to top">V<span aria-hidden="true">·</span>S</a>
+        <a class="site-nav__brand" href={homeAnchor('hero')} aria-label="VennStack Studio, back to top">V<span aria-hidden="true">·</span>S</a>
         <div class="site-nav__links">
-          <a href="#projects">Work</a>
-          <a href="#about">Studio</a>
-          <a href="#contact">Contact</a>
+          <a href={homeAnchor('projects')}>Work</a>
+          <a href={homeAnchor('about')}>Studio</a>
+          <a href={homeAnchor('contact')}>Contact</a>
         </div>
       </nav>
-      <div class="experience-controls" role="group" aria-label="Experience preferences">
+      {isHome && <div class="experience-controls" role="group" aria-label="Experience preferences">
         <button type="button" id="effects-toggle" aria-pressed="false" aria-describedby="effects-status" hidden>
           <span data-effects-label>Pause effects</span>
         </button>
         <button type="button" id="audio-toggle" aria-label="Ambient sound, Sound off" aria-pressed="false" aria-describedby="audio-status" hidden>
           <span aria-hidden="true">♫</span> <span data-audio-label>Sound off</span>
         </button>
-      </div>
+      </div>}
       <p class="sr-only" id="effects-status" role="status"></p>
       <p class="sr-only" id="audio-status" role="status"></p>
     </header>
 
-    <div class="depth-hud" id="depth-hud" aria-hidden="true" hidden>
+    {isHome && <div class="depth-hud" id="depth-hud" aria-hidden="true" hidden>
       <div class="depth-hud__zone" id="depth-zone">SURFACE</div>
       <div class="depth-hud__depth">
         <span class="depth-hud__arrow">▼</span>
         <span id="depth-value">0</span><span>m</span>
       </div>
       <div class="depth-hud__pressure"><div id="depth-pressure"></div></div>
-    </div>
+    </div>}
 
     <main id="main-content" tabindex="-1"><slot /></main>
-    <Footer />
+    <Footer showDepth={isHome} />
 
     <style>
       #ocean-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: var(--z-bubbles); pointer-events: none; visibility: hidden; }

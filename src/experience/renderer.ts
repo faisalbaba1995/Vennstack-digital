@@ -1,5 +1,7 @@
 import { AdditiveBlending, AmbientLight, BufferGeometry, Color, DirectionalLight, Float32BufferAttribute, FogExp2, Group, Mesh, MeshPhongMaterial, PerspectiveCamera, PlaneGeometry, Points, PointsMaterial, Scene, ShaderMaterial, SRGBColorSpace, NoToneMapping, TorusGeometry, WebGLRenderer } from 'three';
-import type { OceanScene, SceneOptions, SceneStatus, Viewport } from './scene-contract';
+import type { OceanScene, QualityTier, SceneOptions, SceneStatus, Viewport } from './scene-contract';
+import { createQualityController, initialQuality, pixelRatio, QUALITY } from './quality';
+import { createBloom } from './bloom';
 
 /** Owns GPU resources, never a clock or semantic interaction. */
 export function createOceanScene(canvas: HTMLCanvasElement, options: SceneOptions): OceanScene {
@@ -9,6 +11,7 @@ export function createOceanScene(canvas: HTMLCanvasElement, options: SceneOption
   renderer.outputColorSpace = SRGBColorSpace;
   renderer.toneMapping = NoToneMapping;
   renderer.setClearColor(0x000000, 0);
+  renderer.info.autoReset = false;
   renderer.debug.onShaderError = () => { throw new Error('Ocean shader compilation failed'); };
   const scene = new Scene();
   scene.fog = new FogExp2(0x07364d, .055);
@@ -21,12 +24,15 @@ export function createOceanScene(canvas: HTMLCanvasElement, options: SceneOption
     const ring = new Mesh(ringGeometry, ringMaterial);
     ring.position.x = direction * 1.05;
     ring.rotation.set(.45, direction * .45, direction * .35);
+    ring.layers.enable(1);
     currents.add(ring);
   }
   scene.add(currents);
   const light = new DirectionalLight(0xb5faff, 2);
   light.position.set(-3, 6, 5);
-  scene.add(light, new AmbientLight(0x406677, .5));
+  const ambient = new AmbientLight(0x406677, .5);
+  light.layers.enable(1); ambient.layers.enable(1);
+  scene.add(light, ambient);
   const causticsGeometry = new PlaneGeometry(45, 30);
   const causticsMaterial = new ShaderMaterial({
     transparent: true, depthWrite: false, blending: AdditiveBlending,
@@ -55,6 +61,24 @@ export function createOceanScene(canvas: HTMLCanvasElement, options: SceneOption
   scene.add(particles);
   let status: SceneStatus = 'ready', disposed = false, frames = 0, losses = 0, recoveries = 0, frameMs = 0;
   let viewport: Viewport = { width: 1, height: 1, dpr: 1 };
+  const policy = createQualityController(initialQuality(navigator.hardwareConcurrency || 4,
+    (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4,
+    renderer.capabilities.maxTextureSize, innerWidth));
+  let bloom: ReturnType<typeof createBloom> | null = null, bloomSupported = true, bloomPressure = 0, bloomMs = 0;
+  let lastDepth = 0, interactionAge = 0, frameIntervalMs = 0;
+  function resize(next: Viewport, quality?: QualityTier) {
+    if (disposed) return;
+    viewport = next;
+    if (quality) policy.reset(quality);
+    const ratio = pixelRatio(next, policy.tier);
+    renderer.setPixelRatio(ratio); renderer.setSize(next.width, next.height, false);
+    camera.aspect = next.width / Math.max(1, next.height); camera.updateProjectionMatrix();
+    particlesGeometry.setDrawRange(0, QUALITY[policy.tier].particles);
+    if (QUALITY[policy.tier].bloom && bloomSupported) {
+      try { bloom ??= createBloom(renderer); bloom.resize(canvas.width, canvas.height); }
+      catch { bloom?.dispose(); bloom = null; bloomSupported = false; }
+    } else { bloom?.dispose(); bloom = null; }
+  }
   let restoreTimer: ReturnType<typeof setTimeout> | undefined;
   const abort = new AbortController();
   const accent = new Color(), nextAccent = new Color(), nextFog = new Color();
@@ -79,6 +103,12 @@ export function createOceanScene(canvas: HTMLCanvasElement, options: SceneOption
     update(_time, delta, depth) {
       if (disposed || status !== 'ready') return;
       const start = performance.now();
+      frameIntervalMs = delta * 1000;
+      interactionAge = Math.abs(depth.progress - lastDepth) > .0001 ? 0 : interactionAge + delta;
+      lastDepth = depth.progress;
+      const previousTier = policy.tier;
+      policy.sample(frameIntervalMs, frameMs, delta, interactionAge < 3);
+      if (previousTier !== policy.tier) resize(viewport);
       elapsed += Math.min(delta, .05);
       currents.rotation.z = Math.sin(elapsed * .09) * .12;
       currents.rotation.y = Math.sin(elapsed * .07) * .08;
@@ -95,30 +125,35 @@ export function createOceanScene(canvas: HTMLCanvasElement, options: SceneOption
       causticsMaterial.uniforms.time.value = elapsed;
       causticsMaterial.uniforms.strength.value = .02 * (1 - depth.progress * .8);
       causticsMaterial.uniforms.tint.value.copy(accent);
-      try { renderer.render(scene, camera); frames++; }
+      try {
+        renderer.info.reset();
+        if (bloom) {
+          try { bloom.render(scene, camera); bloomMs = bloom.diagnostics().bloomMs; }
+          catch { bloom.dispose(); bloom = null; bloomSupported = false; renderer.render(scene, camera); }
+        } else renderer.render(scene, camera);
+        frames++;
+        bloomPressure = frames > 60 && bloomMs > 5 ? bloomPressure + delta : Math.max(0, bloomPressure - delta * 2);
+        if (bloom && bloomPressure > 2) { bloom.dispose(); bloom = null; bloomSupported = false; }
+      }
       catch { report('failed', 'Graphics unavailable.'); }
       frameMs = performance.now() - start;
     },
-    resize(next) {
-      if (disposed) return;
-      viewport = next;
-      const ratio = Math.min(next.dpr, 1.5, Math.sqrt(1_500_000 / Math.max(1, next.width * next.height)));
-      renderer.setPixelRatio(ratio); renderer.setSize(next.width, next.height, false);
-      camera.aspect = next.width / Math.max(1, next.height); camera.updateProjectionMatrix();
-    },
+    resize,
     pause() { if (status === 'ready') report('paused'); },
     resume() { if (status === 'paused') report('ready'); },
     diagnostics() {
-      return { status, quality: 'medium', frames, particles: disposed ? 0 : 240, drawCalls: renderer.info.render.calls,
+      return { status, quality: policy.tier, frames, particles: disposed ? 0 : QUALITY[policy.tier].particles, drawCalls: renderer.info.render.calls,
         geometries: renderer.info.memory.geometries, textures: renderer.info.memory.textures,
         programs: renderer.info.programs?.length ?? 0, pixelCount: disposed ? 0 : canvas.width * canvas.height,
-        renderTargets: 0, contextLosses: losses, recoveries, frameMs, viewport };
+        renderTargets: bloom ? 2 : 0, contextLosses: losses, recoveries, frameMs, frameIntervalMs, viewport,
+        bloomEnabled: !!bloom, bloomMs, bloomSupported, ...bloom?.diagnostics() };
     },
     dispose() {
       if (disposed) return;
       disposed = true; abort.abort(); clearTimeout(restoreTimer);
       ringGeometry.dispose(); ringMaterial.dispose(); particlesGeometry.dispose(); particlesMaterial.dispose();
       causticsGeometry.dispose(); causticsMaterial.dispose();
+      bloom?.dispose(); bloom = null;
       scene.clear(); renderer.dispose(); renderer.forceContextLoss();
       // A discarded context cannot be reused by a subsequent mount on this node.
       if (canvas.isConnected) canvas.replaceWith(canvas.cloneNode(false));

@@ -1,0 +1,48 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import ProjectMedia from '../../../components/ProjectMedia.astro';
+import concept from '../../../assets/luminara-concept.svg';
+---
+<Layout title="Luminara — Concept Preview | VennStack Studio" description="An exploratory wellness identity and interface direction. Original placeholder artwork; no client engagement or measured outcomes are claimed.">
+  <article class="case-study container">
+    <header class="case-study__intro">
+      <a class="case-study__back" href="/#projects">← All project previews</a>
+      <p class="text-label">LUMINARA / CONCEPT PREVIEW</p>
+      <h1>A quieter kind<br />of digital presence.</h1>
+      <p class="text-large">An exploration of identity, interface and motion for a wellness experience.</p>
+      <p class="case-study__notice">This is a concept preview, not a published client case study. The artwork is an original placeholder. Client identity, project scope, final work and outcomes have not been verified.</p>
+    </header>
+    <ProjectMedia src={concept} priority alt="Original concept placeholder: two intersecting pale green loops beside abstract interface lines on a deep teal background." caption="Original concept artwork and interface placeholders. This is not a screenshot of a delivered website or an approved client identity." />
+    <nav class="case-study__contents" aria-label="Concept preview contents">
+      <a href="#direction">Direction</a><a href="#structure">Design structure</a><a href="#evidence">Publication status</a>
+    </nav>
+    <section id="direction" class="case-study__section">
+      <p class="text-label">01 / DIRECTION</p>
+      <div><h2>Space to breathe.</h2><p>The repository’s Luminara concept combines a wellness theme with identity, web design and motion. This preview explores that direction through generous spacing, a restrained palette and intersecting forms.</p><p>These are proposed design choices. A client brief, audience research and agreed constraints are still needed to assess whether they are appropriate.</p></div>
+    </section>
+    <section id="structure" class="case-study__section">
+      <p class="text-label">02 / DESIGN STRUCTURE</p>
+      <div><h2>Calm, with clarity.</h2><p>The concept pairs a dark teal foundation with a soft green accent. Content remains readable and navigable without animation. The visual direction can support a future identity and interface story once approved material is available.</p>
+        <ul><li><strong>Identity:</strong> exploratory intersecting forms; no approved logo is shown.</li><li><strong>Interface:</strong> abstract blocks indicate hierarchy; no finished product is represented.</li><li><strong>Motion:</strong> optional atmosphere supports the portfolio; it is not evidence of client delivery.</li></ul>
+      </div>
+    </section>
+    <section id="evidence" class="case-study__section">
+      <p class="text-label">03 / PUBLICATION STATUS</p>
+      <div><h2>The story is still open.</h2><p>A full case study needs approved scope and role descriptions, process material, final screenshots, image rights and a factual account of the result. No launch date, client endorsement, award or performance outcome is claimed here.</p><p>Until those inputs are supplied, this page remains a concept preview.</p><a class="case-study__contact" href="/#contact">Discuss a project →</a></div>
+    </section>
+  </article>
+</Layout>
+<style>
+  .case-study { padding-block: clamp(3rem, 7vw, 7rem); }
+  .case-study__intro { display: grid; gap: 1.5rem; max-width: 900px; margin-bottom: 3rem; }
+  h1 { font-size: clamp(2.8rem, 6.5vw, 6rem); line-height: 1.05; font-weight: 200; }
+  .case-study__back, .case-study__contents a, .case-study__contact { display: inline-flex; align-items: center; min-height: 44px; width: fit-content; text-decoration: underline; text-underline-offset: .25em; }
+  .case-study__notice { border-left: 2px solid #96d8c9; padding: 1rem 1.25rem; background: #092738; color: #d4e5e9; max-width: 72ch; }
+  .case-study__contents { display: flex; flex-wrap: wrap; gap: .5rem 2rem; padding-block: 2rem; border-bottom: 1px solid #456578; }
+  .case-study__section { display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; padding-block: 4rem; border-bottom: 1px solid #456578; scroll-margin-top: 2rem; }
+  .case-study__section > div { display: grid; gap: 1.25rem; max-width: 70ch; }
+  .case-study__section h2 { font-size: clamp(2rem, 4vw, 3rem); }
+  .case-study__section p, li { color: var(--text-secondary); line-height: 1.8; }
+  ul { padding-left: 1.25rem; display: grid; gap: .75rem; list-style: disc; }
+  @media (max-width: 700px) { .case-study__section { grid-template-columns: 1fr; gap: 1rem; padding-block: 3rem; } }
+</style>

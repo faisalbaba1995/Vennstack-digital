@@ -1,5 +1,5 @@
 import gsap from 'gsap';
-import { measureDepthGeometry, type DepthGeometry } from '../experience/depth-model';
+import { DEPTH_STOPS, measureDepthGeometry, type DepthGeometry } from '../experience/depth-model';
 import { initAudio } from './audio-controller';
 import type { OceanScene, SceneDiagnostics } from '../experience/scene-contract';
 import { initDepthTracker } from './depth-tracker';
@@ -17,6 +17,8 @@ function writePaused(value: boolean) { try { localStorage.setItem(PAUSE_KEY, Str
 export function mountExperience(): () => void {
   disposeCurrent?.();
   const root = document.documentElement;
+  const reading = root.dataset.experience === 'reading';
+  const measure = () => reading ? [{ y: 0, stop: DEPTH_STOPS[4] }] : measureDepthGeometry();
   const abort = new AbortController();
   const media = window.matchMedia('(prefers-reduced-motion: reduce)');
   const effectsButton = document.getElementById('effects-toggle') as HTMLButtonElement | null;
@@ -24,7 +26,7 @@ export function mountExperience(): () => void {
   const effectsStatus = document.getElementById('effects-status');
   const depthHud = document.getElementById('depth-hud');
   const audio = initAudio();
-  let geometry: DepthGeometry = measureDepthGeometry();
+  let geometry: DepthGeometry = measure();
   const depth = initDepthTracker(() => geometry);
   let scene: OceanScene | null = null;
   let loading = false, graphicsFailed = false, contextLost = false;
@@ -35,7 +37,7 @@ export function mountExperience(): () => void {
   let gsapRuntime: ReturnType<typeof initGSAP> | null = null;
   let explicitlyPaused = readPaused(), suspended = document.hidden, ticking = false, disposed = false, lastTime = 0;
 
-  function isFullMotion() { return !media.matches && !explicitlyPaused; }
+  function isFullMotion() { return !reading && !media.matches && !explicitlyPaused; }
   function tick(timeSeconds: number) {
     if (suspended || disposed) return;
     // Reconcile at the clock boundary too: some browsers update matches before
@@ -44,15 +46,15 @@ export function mountExperience(): () => void {
     const time = timeSeconds * 1000;
     lenisRuntime?.lenis.raf(time);
     const state = depth.update(window.scrollY);
-    scene?.update(time, lastTime ? Math.min(.05, Math.max(0, (time - lastTime) / 1000)) : 0, state);
+    scene?.update(time, lastTime ? Math.max(0, (time - lastTime) / 1000) : 0, state);
     lastTime = time;
   }
-  function startTicker() { if (!ticking) { ticking = true; lastTime = 0; gsap.ticker.add(tick); } }
+  function startTicker() { if (!ticking && !disposed && !suspended && !graphicsFailed && !contextLost && isFullMotion()) { ticking = true; lastTime = 0; gsap.ticker.add(tick); } }
   function stopTicker() { if (ticking) { ticking = false; gsap.ticker.remove(tick); } }
   function paintPreferences(message = '') {
     const full = isFullMotion();
-    root.dataset.motion = media.matches ? 'reduced' : explicitlyPaused || suspended || graphicsFailed || contextLost ? 'paused' : 'full';
-    root.dataset.effects = full && !suspended ? 'running' : 'paused';
+    root.dataset.motion = media.matches ? 'reduced' : !full || suspended || graphicsFailed || contextLost ? 'paused' : 'full';
+    root.dataset.effects = full && !suspended && !graphicsFailed && !contextLost ? 'running' : 'paused';
     if (effectsButton) {
       effectsButton.hidden = false; effectsButton.classList.add('is-visible');
       effectsButton.setAttribute('aria-pressed', String(!full));
@@ -87,7 +89,14 @@ export function mountExperience(): () => void {
           if (status === 'ready' && (suspended || !isFullMotion())) scene?.pause();
         } });
         scene.resize(viewport()); root.dataset.renderer = 'ready'; loading = false;
-      }).catch(() => { loading = false; graphicsFailed = true; root.dataset.renderer = 'failed'; disableMotion(); paintPreferences('Graphics unavailable; content remains available.'); });
+      }).catch(() => {
+        if (disposed) return;
+        loading = false; graphicsFailed = true; disableMotion();
+        scene?.dispose(); lastDisposed = scene?.diagnostics() ?? lastDisposed; scene = null;
+        const canvas = document.getElementById('ocean-canvas');
+        if (canvas) canvas.replaceWith(canvas.cloneNode(false));
+        root.dataset.renderer = 'failed'; paintPreferences('Graphics unavailable; content remains available.');
+      });
     }
     scene?.resume();
     gsapRuntime ??= initGSAP();
@@ -101,7 +110,7 @@ export function mountExperience(): () => void {
   }
   function refreshGeometry() {
     if (disposed) return;
-    geometry = measureDepthGeometry(); scene?.resize(viewport()); depth.update(); gsapRuntime?.refresh();
+    geometry = measure(); scene?.resize(viewport()); depth.update(); gsapRuntime?.refresh();
   }
   function onVisibility() {
     suspended = document.hidden;

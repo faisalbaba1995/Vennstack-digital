@@ -1,6 +1,7 @@
 ---
 // Footer — Ocean Floor
 const buildYear = new Date().getFullYear();
+const { showDepth = true } = Astro.props;
 ---
 
 <footer class="footer" id="footer">
@@ -14,10 +15,10 @@ const buildYear = new Date().getFullYear();
         </div>
       </div>
 
-      <div class="footer__depth-stamp text-mono">
+      {showDepth && <div class="footer__depth-stamp text-mono">
         <span class="footer__depth-label text-label">MAXIMUM DEPTH REACHED</span>
         <span class="footer__depth-value" id="footer-depth">11,000m</span>
-      </div>
+      </div>}
     </div>
 
     <div class="footer__divider"></div>
