@@ -5,7 +5,21 @@ import { createBloom } from './bloom';
 
 /** Owns GPU resources, never a clock or semantic interaction. */
 export function createOceanScene(canvas: HTMLCanvasElement, options: SceneOptions): OceanScene {
-  const renderer = new WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: 'low-power' });
+  const context = canvas.getContext('webgl2', { alpha: true, antialias: false, powerPreference: 'low-power' });
+  if (!context) throw new Error('WebGL2 unavailable');
+  const loss = context.getExtension('WEBGL_lose_context');
+  let renderer: WebGLRenderer | undefined;
+  try {
+    renderer = new WebGLRenderer({ canvas, context, alpha: true, antialias: false, powerPreference: 'low-power' });
+    return buildScene(renderer, canvas, options);
+  } catch (error) {
+    renderer?.dispose(); loss?.loseContext();
+    if (canvas.isConnected) canvas.replaceWith(canvas.cloneNode(false));
+    throw error;
+  }
+}
+
+function buildScene(renderer: WebGLRenderer, canvas: HTMLCanvasElement, options: SceneOptions): OceanScene {
   // Cache while healthy: getExtension() can return null after a context is lost.
   renderer.extensions.get('WEBGL_lose_context');
   renderer.outputColorSpace = SRGBColorSpace;
@@ -84,14 +98,22 @@ export function createOceanScene(canvas: HTMLCanvasElement, options: SceneOption
   const accent = new Color(), nextAccent = new Color(), nextFog = new Color();
   let elapsed = 0;
   const report = (next: SceneStatus, reason?: string) => { status = next; options.onStatus(next, reason); };
-  canvas.addEventListener('webglcontextlost', (event) => {
-    event.preventDefault();
-    losses++; report('lost');
+  function scheduleRestore() {
+    clearTimeout(restoreTimer);
+    if (disposed || document.hidden || status !== 'lost') return;
     restoreTimer = setTimeout(() => {
-      if (disposed || status !== 'lost') return;
+      if (disposed || document.hidden || status !== 'lost') return;
       try { renderer.forceContextRestore(); } catch { /* Timeout below preserves the static page. */ }
       restoreTimer = setTimeout(() => { if (!disposed && status === 'lost') report('failed', 'Graphics could not recover.'); }, 4000);
     }, 500);
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) clearTimeout(restoreTimer);
+    else if (status === 'lost') scheduleRestore();
+  }, { signal: abort.signal });
+  canvas.addEventListener('webglcontextlost', (event) => {
+    event.preventDefault();
+    losses++; report('lost'); scheduleRestore();
   }, { signal: abort.signal });
   canvas.addEventListener('webglcontextrestored', () => {
     if (disposed) return;
@@ -115,15 +137,16 @@ export function createOceanScene(canvas: HTMLCanvasElement, options: SceneOption
       particles.rotation.y = elapsed * .012;
       particles.position.y = Math.sin(elapsed * .05) * .6;
       camera.position.y = -depth.progress * .7;
-      camera.position.z = (camera.aspect < 1 ? 14 : 10) + depth.progress * 2;
+      camera.position.z = (camera.aspect < 1 ? 18 : 10) + depth.progress * 2;
       accent.set(depth.zone.accent).lerp(nextAccent.set(depth.next.accent), depth.mix);
       ringMaterial.color.copy(accent); ringMaterial.emissive.copy(accent);
-      ringMaterial.opacity = .32 - depth.progress * .14;
+      ringMaterial.opacity = (bloom ? .14 : .32) * (1 - depth.progress * .44);
+      particlesMaterial.opacity = bloom ? .12 : .4;
       light.color.copy(accent); light.intensity = 2 - depth.progress * 1.5;
       scene.fog!.color.set(depth.zone.top).lerp(nextFog.set(depth.next.top), depth.mix);
       (scene.fog as FogExp2).density = .055 + depth.progress * .035;
       causticsMaterial.uniforms.time.value = elapsed;
-      causticsMaterial.uniforms.strength.value = .02 * (1 - depth.progress * .8);
+      causticsMaterial.uniforms.strength.value = (bloom ? .002 : .02) * (1 - depth.progress * .8);
       causticsMaterial.uniforms.tint.value.copy(accent);
       try {
         renderer.info.reset();

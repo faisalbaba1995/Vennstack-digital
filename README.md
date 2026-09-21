@@ -1,6 +1,6 @@
 # VennStack Studio
 
-An Astro static portfolio with an optional ocean descent: GSAP reveals, Lenis scrolling, Canvas 2D particles, and opt-in synthesized audio. The HTML remains usable when JavaScript is disabled or unavailable.
+An Astro static portfolio with an optional ocean descent: one Three.js renderer, GSAP reveals, Lenis scrolling, and opt-in synthesized audio. Semantic HTML and a static SVG composition remain usable without JavaScript, with reduced motion, or when graphics fail.
 
 ## Local development
 
@@ -45,7 +45,8 @@ A configured form supports native POST without JavaScript. Its enhancement preve
 ## Implementation and next work
 
 - [Phase 1 implementation, external inputs, and validation](docs/PHASE-1.md)
+- [Phase 2 renderer, concept route, budgets and validation](docs/PHASE-2.md)
 - [Asset inventory and visual direction](docs/ASSETS.md)
 - [Audit and phased roadmap](VENNSTACK-AUDIT.md)
 
-`src/scripts/experience.ts` owns the experience lifecycle and its single Lenis/particle/depth ticker. `src/experience/depth-model.ts` owns section anchors and palette interpolation. Components own semantic content and local CSS. Phase 2 can add a renderer through the documented scene contract without making content depend on it.
+`src/scripts/experience.ts` owns the lifecycle and single GSAP clock. `src/experience/depth-model.ts` owns section anchors and palette interpolation. `renderer.ts`, `quality.ts` and `bloom.ts` own graphics, adaptive budgets and selective glow. Components own semantic content and local CSS. `/work/luminara/` is an explicitly labelled concept preview with responsive local media; it uses native scrolling and no WebGL.

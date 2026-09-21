@@ -109,11 +109,12 @@ export function mountExperience(): () => void {
     if (isFullMotion()) enableMotion(); else disableMotion();
   }
   function refreshGeometry() {
-    if (disposed) return;
+    if (disposed || suspended) return;
     geometry = measure(); scene?.resize(viewport()); depth.update(); gsapRuntime?.refresh();
   }
   function onVisibility() {
     suspended = document.hidden;
+    if (!suspended) refreshGeometry();
     if (suspended) { stopTicker(); scene?.pause(); lenisRuntime?.lenis.stop(); }
     else if (isFullMotion()) { lenisRuntime?.lenis.start(); startTicker(); }
     applyPreference();

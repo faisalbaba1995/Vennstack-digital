@@ -13,10 +13,10 @@ The current abstract graphics are authored CSS/SVG/Canvas treatments. They are n
 | Inter Variable, Latin WOFF2 | Installed `@fontsource-variable/inter`, OFL license distributed with package | Self-hosted heading/body font; preloaded; verified by browser tests. |
 | JetBrains Mono Variable, Latin WOFF2 | Installed `@fontsource-variable/jetbrains-mono`, OFL license distributed with package | Self-hosted labels and controls; verified by browser tests. |
 | Ocean gradient, wave paths, light rays, caustic approximation | Existing component CSS/SVG, revised dark palette | Hero concept retained; static form works without JS. |
-| Bubble sprites | Runtime-generated Canvas 2D radial gradients | Cached by size; DPR capped at 2; no external image assets. |
+| Intersecting currents, marine snow and caustics | Original Three.js geometry and procedural shader code | Replaces Canvas 2D bubbles in Phase 2; 80/160/240 world-space points, bounded pixel count and static SVG fallback. No external textures or models. |
 | Skill radar and beacon | Component SVG/CSS | Decorative, hidden from assistive technology. |
 | Six project tile placeholders | `ProjectsMidnight.astro` | Numbered abstract placeholders, descriptions explicitly provisional; no case-study links or unverified dates. |
-| Luminara featured preview | `FeaturedAbyss.astro` | Explicit concept preview. No award, conversion, or engagement claims. |
+| Luminara featured preview and `/work/luminara/` | `FeaturedAbyss.astro`, original `src/assets/luminara-concept.svg` | Explicit concept preview. No client engagement, launch, award, conversion, or engagement claims. The SVG is original placeholder artwork, not approved project evidence. |
 | Ambient audio | Runtime-generated brown noise, filtered and faded | Opt-in; no downloaded music or third-party recording. |
 | `public/favicon.svg`, `public/favicon.ico` | Existing repository | Retained; brand replacement/approval still needed. |
 
@@ -39,6 +39,8 @@ Supply an approved SVG studio mark/favicon and a social sharing image with title
 
 Start with one hero composition: a legible VennStack title in front of a restrained surface-to-depth light field, with one recognizable authored silhouette. Use the same silhouette/lighting language in the featured scene. Keep project proof as HTML/media. Test the combined scene budget before adding creatures, fluid effects, volumetric passes, or more assets.
 
-Use AVIF/WebP with responsive sizes for project media and reserve dimensions to avoid layout shifts. Introduce compressed 3D assets only with explicit ownership, download/resident-memory budgets, a static poster, and a disposal owner. These are future implementation requirements; Phase 1 includes no Three.js/WebGL dependency.
+Phase 2 adds `ProjectMedia.astro`: AVIF/WebP sources at 480/800/1200/1600 pixels, PNG fallback, explicit dimensions, alt text, caption, eager cover and lazy subsequent images. Only repository-authored SVG sources are rasterized by Astro; remote image domains are not enabled. Replace the concept import with approved local raster material when available. Introduce compressed 3D assets only with explicit ownership, download/resident-memory budgets, a static poster, and a disposal owner.
+
+For Luminara, supply `src/assets/projects/luminara/cover.png` (at least 1600×1000), optional `process-01.png` and `result-desktop.png` (at least 1600 pixels wide), and optional `result-mobile.png` (at least 780 pixels wide). Lossless WebP originals are also suitable. Alongside them supply an approval record with the rights holder, publication permission, credit, alt text, caption and crop instructions for each file. These paths describe requested future inputs, not files claimed to exist. Supply the approved factual story and role/scope before replacing the clearly labelled concept copy; metrics are optional and require evidence.
 
 Asset approval is pending the owner's material. This inventory records what exists and the proposed direction; it does not claim owner approval.

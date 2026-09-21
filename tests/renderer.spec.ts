@@ -2,10 +2,15 @@ import { expect, test } from '@playwright/test';
 
 test('WebGL draws, releases resources on remount, and recovers a real lost context', async ({ page }) => {
   test.setTimeout(60_000);
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'hardwareConcurrency', { value: 8 });
+    Object.defineProperty(navigator, 'deviceMemory', { value: 8 });
+  });
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/');
   await expect.poll(() => page.evaluate(() => window.__vennDiagnostics?.().renderer?.frames ?? 0)).toBeGreaterThan(2);
+  expect(await page.evaluate(() => window.__vennDiagnostics?.().renderer)).toMatchObject({ bloomEnabled: true, renderTargets: 2 });
   for (let i = 0; i < 3; i++) {
     await page.evaluate(() => document.dispatchEvent(new Event('astro:page-load')));
     await expect.poll(() => page.evaluate(() => window.__vennDiagnostics?.().renderer?.frames ?? 0)).toBeGreaterThan(2);
@@ -66,9 +71,9 @@ test('a blocked renderer chunk preserves the static composition', async ({ page 
 
 test('shader compilation failure leaves visible content and releases allocated resources', async ({ page }) => {
   await page.addInitScript(() => {
-    const parameter = WebGL2RenderingContext.prototype.getShaderParameter;
-    WebGL2RenderingContext.prototype.getShaderParameter = function (shader, name) {
-      return name === this.COMPILE_STATUS ? false : parameter.call(this, shader, name);
+    const source = WebGL2RenderingContext.prototype.shaderSource;
+    WebGL2RenderingContext.prototype.shaderSource = function (shader, code) {
+      source.call(this, shader, `${code}\n invalid_glsl!`);
     };
   });
   await page.goto('/');
@@ -119,4 +124,23 @@ test('unrecoverable context loss releases resources and stays static after visib
   expect(await page.evaluate(() => window.__vennDiagnostics?.().ticking)).toBe(false);
   expect(await page.evaluate(() => window.__vennDiagnostics?.().lastDisposed)).toMatchObject({ geometries: 0, textures: 0, programs: 0 });
   await expect(page.locator('h1')).toBeVisible();
+});
+
+test('a hidden lost context waits for visibility before recovery', async ({ page }) => {
+  await page.goto('/');
+  await expect.poll(() => page.evaluate(() => window.__vennDiagnostics?.().renderer?.frames ?? 0)).toBeGreaterThan(1);
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { configurable: true, value: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+    (document.querySelector('#ocean-canvas') as HTMLCanvasElement).getContext('webgl2')!.getExtension('WEBGL_lose_context')!.loseContext();
+  });
+  await expect(page.locator('html')).toHaveAttribute('data-renderer', 'lost');
+  await page.waitForTimeout(800);
+  expect(await page.evaluate(() => window.__vennDiagnostics?.().renderer?.recoveries)).toBe(0);
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { configurable: true, value: false });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await expect(page.locator('html')).toHaveAttribute('data-renderer', 'ready');
+  expect(await page.evaluate(() => window.__vennDiagnostics?.().renderer?.recoveries)).toBe(1);
 });

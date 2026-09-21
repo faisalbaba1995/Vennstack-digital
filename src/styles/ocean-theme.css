@@ -3,6 +3,7 @@
    ============================================ */
 
 /* ---------- Ocean Background System ---------- */
+html[data-experience="reading"] body { background: #071426; }
 /* The runtime derives these colors from the measured section depth anchors. */
 
 .ocean-bg {

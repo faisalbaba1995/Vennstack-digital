@@ -1,10 +1,11 @@
-import { Mesh, NoBlending, OrthographicCamera, PlaneGeometry, Scene, ShaderMaterial, Vector2, WebGLRenderTarget } from 'three';
+import { HalfFloatType, Mesh, NoBlending, OrthographicCamera, PlaneGeometry, Scene, ShaderMaterial, Vector2, WebGLRenderTarget } from 'three';
 import type { Camera, WebGLRenderer } from 'three';
 
 /** Selective current glow at quarter width/height; one final linear-to-sRGB conversion. */
 export function createBloom(renderer: WebGLRenderer) {
-  const base = new WebGLRenderTarget(1, 1, { depthBuffer: false, stencilBuffer: false });
-  const glow = new WebGLRenderTarget(1, 1, { depthBuffer: false, stencilBuffer: false });
+  if (!renderer.extensions.has('EXT_color_buffer_float')) throw new Error('Linear glow targets unsupported');
+  const base = new WebGLRenderTarget(1, 1, { type: HalfFloatType, depthBuffer: false, stencilBuffer: false });
+  const glow = new WebGLRenderTarget(1, 1, { type: HalfFloatType, depthBuffer: false, stencilBuffer: false });
   const geometry = new PlaneGeometry(2, 2);
   const material = new ShaderMaterial({
     depthTest: false, depthWrite: false, blending: NoBlending,
@@ -46,7 +47,7 @@ export function createBloom(renderer: WebGLRenderer) {
         milliseconds = glowTime + performance.now() - compositeStart;
       } finally { sceneCamera.layers.set(0); renderer.setRenderTarget(null); }
     },
-    diagnostics() { return { bloomMs: milliseconds, bloomPixels: disposed ? 0 : glow.width * glow.height, targetBytes: disposed ? 0 : 4 * (base.width * base.height + glow.width * glow.height) }; },
+    diagnostics() { return { bloomMs: milliseconds, bloomPixels: disposed ? 0 : glow.width * glow.height, targetBytes: disposed ? 0 : 8 * (base.width * base.height + glow.width * glow.height) }; },
     dispose() {
       if (disposed) return; disposed = true;
       base.dispose(); glow.dispose(); geometry.dispose(); material.dispose(); screen.clear();
