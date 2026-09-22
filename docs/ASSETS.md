@@ -4,7 +4,7 @@
 
 Keep the existing “Deep Dive” direction: thin editorial typography, dark navy reading surfaces, cyan highlights at the surface, and restrained mint accents at depth. The hero introduces the studio immediately; the featured section repeats the same bioluminescent language. Graphics support readable content, and visitors can pause them. Audio is silent until requested.
 
-The current abstract graphics are authored CSS/SVG/Canvas treatments. They are not photographs, client screenshots, finished 3D creatures, or evidence of shipped client work. No stock or generated client imagery has been substituted for missing material.
+The current abstract graphics are authored CSS/SVG/WebGL treatments. They are not photographs, client screenshots, finished 3D creatures, or evidence of shipped client work. No stock or generated client imagery has been substituted for missing material.
 
 ## Current inventory
 
@@ -15,7 +15,7 @@ The current abstract graphics are authored CSS/SVG/Canvas treatments. They are n
 | Ocean gradient, wave paths, light rays, caustic approximation | Existing component CSS/SVG, revised dark palette | Hero concept retained; static form works without JS. |
 | Intersecting currents, marine snow and caustics | Original Three.js geometry and procedural shader code | Replaces Canvas 2D bubbles in Phase 2; 80/160/240 world-space points, bounded pixel count and static SVG fallback. No external textures or models. |
 | Skill radar and beacon | Component SVG/CSS | Decorative, hidden from assistive technology. |
-| Six project tile placeholders | `ProjectsMidnight.astro` | Numbered abstract placeholders, descriptions explicitly provisional; no case-study links or unverified dates. |
+| Six project tile placeholders | `ProjectsMidnight.astro` | Numbered abstract placeholders, descriptions explicitly provisional; Luminara links to its labelled concept route. Other tiles remain previews; no unverified dates are displayed. |
 | Luminara featured preview and `/work/luminara/` | `FeaturedAbyss.astro`, original `src/assets/luminara-concept.svg` | Explicit concept preview. No client engagement, launch, award, conversion, or engagement claims. The SVG is original placeholder artwork, not approved project evidence. |
 | Ambient audio | Runtime-generated brown noise, filtered and faded | Opt-in; no downloaded music or third-party recording. |
 | `public/favicon.svg`, `public/favicon.ico` | Existing repository | Retained; brand replacement/approval still needed. |

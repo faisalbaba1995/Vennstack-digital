@@ -24,7 +24,7 @@ The effective DPR is the minimum of device DPR, tier cap and the square root of 
 
 The first two active seconds are warm-up. Frame intervals over 28 ms or CPU submission over 8 ms accumulate pressure; healthy time removes pressure twice as fast. Two seconds of accumulated pressure drop one tier. Changes have a ten-second cooldown. Promotion requires 30 seconds below 19 ms frame interval and 4 ms submission, without recent depth movement; it never exceeds the initial capability tier. Paused time does not count toward recovery. Tests also inject actual draw-call pressure and check a real downgrade.
 
-Bloom uses two RGBA8 targets: one bounded base target and one glow target at quarter width/height (one sixteenth of drawing pixels). Only the two currents enter the glow pass. A nine-tap composite adds restrained glow; no depth buffers, HDR targets, external textures, multisampling or extra blur target are allocated. Framebuffer completeness is checked. A failed bloom pass falls back to direct rendering. Bloom is disabled for the mount if its extra CPU submission work exceeds 5 ms for two accumulated seconds after 60 frames. This is CPU instrumentation, not GPU timer-query evidence.
+Bloom uses two RGBA16F targets: one bounded base target and one glow target at quarter width/height (one sixteenth of drawing pixels). Half-float precision prevents the visible banding found in the initial RGBA8 linear caustics pass. Only the two currents enter the glow pass. A nine-tap composite adds restrained glow; no depth buffers, external textures, multisampling or extra blur target are allocated. `EXT_color_buffer_float` and framebuffer completeness are checked; unsupported targets or a failed bloom pass fall back to direct rendering. Bloom is disabled for the mount if its extra CPU submission work exceeds 5 ms for two accumulated seconds after 60 frames. This is CPU instrumentation, not GPU timer-query evidence.
 
 Colors enter Three.js through its color-managed `Color` API. Intermediate targets stay linear; final output converts once to sRGB. `NoToneMapping` avoids a second tone transform. Direct rendering uses the same output conversion. The scene deliberately uses simple Phong lighting: resource checks found a retained internal PBR lookup texture in the more complex material path, and the simpler material meets this scene's needs.
 
@@ -38,7 +38,7 @@ Colors enter Three.js through its color-managed `Color` API. Intermediate target
 | Renderer | Programs, render lists, bindings, internal listeners, WebGL context | Renderer disposal, explicit context release, fresh canvas for the next mount |
 | Recovery | Context listeners and one pending timer | Abort listeners and clear timer |
 
-High/medium use at most four geometries, four programs, two textures, two targets and seven draw calls. Low uses three geometries/programs, zero textures/targets and four draws. Maximum target color storage is approximately 6.375 MB at the high pixel cap, excluding the default framebuffer and driver overhead. Tests inspect actual Three.js counters; they are not replaced with synthetic zeros after disposal.
+High/medium use at most four geometries, four programs, two textures, two targets and seven draw calls. Low uses three geometries/programs, zero textures/targets and four draws. Maximum target color storage is approximately 12.75 MB at the high pixel cap, excluding the default framebuffer and driver overhead. Tests inspect actual Three.js counters; they are not replaced with synthetic zeros after disposal.
 
 The context-loss extension is cached while healthy. A lost context hides only the decorative canvas, stops the expensive experience and reveals all content with native scrolling. A restore attempt occurs after 500 ms, with a four-second deadline. Two recoveries per mount are allowed; further losses end in the static fallback. Recovery reconciles current visibility and motion preference before resuming. Constructor, shader, module-download and terminal recovery failures retain usable HTML. Pending imports cannot allocate a scene after route disposal. Repeated disposal is safe, and a discarded canvas is replaced rather than reused with a lost context.
 
@@ -58,7 +58,43 @@ The existing contact form additionally needs `PUBLIC_WEB3FORMS_ACCESS_KEY` assoc
 
 ## Validation and measurements
 
-Final regression and visual-review results are being recorded. Earlier milestones passed foundation lifecycle checks, real context loss/recovery, zero remaining resource counters, 12 combined quality/renderer/baseline checks, and six case-study accessibility/no-JS/navigation checks. The dependency audit finding in `devalue` was fixed with a compatible update; npm reports zero vulnerabilities.
+Production build, Astro check (zero errors/warnings/hints) and ESLint pass. The dependency audit finding in `devalue` was fixed by updating it to 5.9.4; npm reports zero vulnerabilities. The final complete production regression run passed **76/76 tests in 5.9 minutes**, without retries, across desktop and mobile viewport profiles.
+
+Coverage includes all Phase 1 accessibility, keyboard, contact success/error/timeout/native POST, audio, native scrolling, depth geometry and motion-preference checks; Phase 2 adds real WebGL context loss/recovery, terminal and hidden-tab recovery, actual invalid-GLSL failure, blocked renderer downloads, capability limits, injected draw-call pressure, hysteresis, repeated mounts and real route transitions, zero residual geometry/texture/program counts, responsive AVIF/WebP output, concept-route axe checks and no-JS navigation. High/medium resource tests explicitly enable those capability branches and assert bloom targets exist before checking their disposal. No test sends real contact submissions.
+
+The production output totals **193,172 bytes gzip JavaScript**, including the deferred renderer, for both empty-key and configured-contact fixtures. This is below the **350,000-byte** budget with no exception. The bundler's 500 KB uncompressed chunk warning concerns the deferred Three.js chunk; it does not indicate a gzip budget violation. First-scene media/font transfer is **90,309 bytes**, below 1.5 MB. Total local resource transfer is **830,177 bytes** because the fixture server sends uncompressed JS. The original concept cover produces 2,672/4,640/7,045/9,376-byte AVIF variants at 480/800/1200/1600 pixels.
+
+Final single-worker production baseline, Chrome **150.0.7871.125**, local HTTP, cold browser context, no CPU/network throttle, 120 sampled idle frames:
+
+| Measurement | Desktop 1280×720, DPR 1 | Mobile viewport 412×839, DPR 2.625 |
+|---|---:|---:|
+| Local LCP candidate | 252 ms | 284 ms |
+| CLS | 0 | 0 |
+| Median frame interval | 16.7 ms | 16.7 ms |
+| p95 frame interval | 16.8 ms | 16.8 ms |
+| p95 CPU submission | 1.6 ms | 1.3 ms |
+| Selected tier | Low | Low |
+| Drawing pixels | 598,560 | 345,668 |
+
+The browser reports two logical cores, so low-tier selection is intentional. The Playwright profile user agent names Chrome 153; the actual installed browser version above is recorded separately. These are lab observations, not field p75 Web Vitals, real Pixel hardware results or an INP claim.
+
+An isolated production run after regression workers exited used one context at a time, 90 warm-up frames and 180 samples. Core/memory hints were overridden to exercise the tiers; actual WebGL capabilities were unchanged. All three retained their requested tiers:
+
+| Tier / viewport | p95 frame interval | p95 CPU submission | p95 extra bloom submission | Target color storage |
+|---|---:|---:|---:|---:|
+| High, 1440×1000, DPR 1 | 19 ms | 0.8 ms | 0.5 ms | 12,240,000 bytes |
+| Medium, 390×844, DPR 2.625 | 18 ms | 1.0 ms | 0.7 ms | 4,364,864 bytes |
+| Low, 390×844, DPR 2.625 | 20 ms | 0.8 ms | Off | 0 |
+
+The earlier visual-capture run overlapped other work and showed a noisier high-tier 78 ms p95 interval / 5.8 ms p95 bloom submission. The isolated run above resolves that measurement concern; it does not substitute for physical-device thermal testing. Raw samples and final tier results are saved in `tests/.artifacts/phase2-review/measurements.json` and `tiers.json`. Runtime pressure-based downgrade and bloom suppression remain enabled.
+
+## Visual review
+
+Reviewed desktop and mobile enhanced heroes, reduced-motion startup, no-JS pages, blocked-renderer fallback, project cards and the complete concept route. Evidence is in `tests/.artifacts/phase2-review/` (ignored generated artifacts), with baseline JSON/screenshots under `test-results/`.
+
+Resolved findings: excessive light behind text was reduced; hero buttons gained opaque surfaces; the mobile camera was pulled back to keep both currents visible; RGBA8 caustic banding was eliminated using capability-checked half-float targets; the reading route received a consistent dark body background. The resulting hero preserves the intersecting-current silhouette across enhanced and static modes. Navigation, text and actions remain legible, concept notices are prominent, and the case layout reflows at narrow widths.
+
+To reproduce screenshots, keep `node tests/support/prepare-and-serve.mjs` running and run `node tests/support/visual-review.mjs` in another terminal. For uncontended production tier measurements, run `npm run build` followed by `node tests/support/measure-tiers.mjs` after other browser tests exit; this starts and closes its own loopback server. Capability overrides in these tools only exercise quality branches in the test browser; they are not production controls.
 
 ## Remaining physical-device and manual validation
 
